@@ -207,18 +207,18 @@ import {
 } from './memory-service.js';
 import { type WorkspaceMemoryMutationContext } from './memory-store.js';
 import {
-  isHappyClawBootstrapTurn,
-  isHappyClawOwnerProfileRuntimeStructurallyEligible,
-} from './happyclaw-bootstrap.js';
+  isMiniclawBootstrapTurn,
+  isMiniclawOwnerProfileRuntimeStructurallyEligible,
+} from './miniclaw-bootstrap.js';
 import {
-  acknowledgeHappyClawOwnerIntroduction,
-  claimHappyClawOwnerIntroduction,
-  clearHappyClawOwnerPreferredAddress,
-  getHappyClawOwnerProfileProjection,
+  acknowledgeMiniclawOwnerIntroduction,
+  claimMiniclawOwnerIntroduction,
+  clearMiniclawOwnerPreferredAddress,
+  getMiniclawOwnerProfileProjection,
   OwnerProfileStoreError,
-  setHappyClawOwnerPreferredAddress,
-  skipHappyClawOwnerIntroduction,
-  type HappyClawOwnerProfileProjection,
+  setMiniclawOwnerPreferredAddress,
+  skipMiniclawOwnerIntroduction,
+  type MiniclawOwnerProfileProjection,
 } from './owner-profile-store.js';
 import {
   buildWorkspaceMemoryUpdateInput,
@@ -580,7 +580,7 @@ function buildWebTraceUrl(
   turnId?: string,
 ): string | null {
   const base =
-    process.env.HAPPYCLAW_WEB_URL ||
+    process.env.MINICLAW_WEB_URL ||
     process.env.PUBLIC_BASE_URL ||
     process.env.WEB_BASE_URL;
   if (!base || !folder) return null;
@@ -2202,16 +2202,16 @@ function toContainerAgentProfile(
   };
 }
 
-function resolveHappyClawOwnerProfileForTurn(input: {
+function resolveMiniclawOwnerProfileForTurn(input: {
   group: RegisteredGroup;
   profile: AgentProfile | undefined;
   turnId?: string;
   isScheduledTask?: boolean;
   runtimeAgentId?: string | null;
   runtimeAgentKind?: 'task' | 'conversation' | 'spawn' | null;
-}): HappyClawOwnerProfileProjection | undefined {
+}): MiniclawOwnerProfileProjection | undefined {
   if (
-    !isHappyClawBootstrapTurn({
+    !isMiniclawBootstrapTurn({
       turnId: input.turnId,
       isHome: input.group.is_home === true,
       isDefaultProfile: input.profile?.is_default === true,
@@ -2246,13 +2246,13 @@ function resolveHappyClawOwnerProfileForTurn(input: {
   );
   if (!workspaceJid) return undefined;
   try {
-    return getHappyClawOwnerProfileProjection(workspaceJid);
+    return getMiniclawOwnerProfileProjection(workspaceJid);
   } catch {
     return undefined;
   }
 }
 
-function isHappyClawOwnerProfileRuntimeEligible(input: {
+function isMiniclawOwnerProfileRuntimeEligible(input: {
   group: RegisteredGroup;
   profile: AgentProfile | undefined;
   turnId?: string;
@@ -2260,7 +2260,7 @@ function isHappyClawOwnerProfileRuntimeEligible(input: {
   runtimeAgentId?: string | null;
   runtimeAgentKind?: 'task' | 'conversation' | 'spawn' | null;
 }): boolean {
-  return isHappyClawOwnerProfileRuntimeStructurallyEligible({
+  return isMiniclawOwnerProfileRuntimeStructurallyEligible({
     isHome: input.group.is_home === true,
     isDefaultProfile: input.profile?.is_default === true,
     isScheduledTask: input.isScheduledTask,
@@ -2530,7 +2530,7 @@ function bindChannelOutboxScope(
     threadId: route.threadId ?? null,
     turnRunId: runtime.runId,
     inputTurnId,
-    owner: `happyclaw-outbox:${process.pid}:${runtime.runId}`,
+    owner: `miniclaw-outbox:${process.pid}:${runtime.runId}`,
   });
 }
 
@@ -3073,7 +3073,7 @@ async function deliverProactiveFinalFallback(input: {
       originalRunId: input.scope?.turnRunId ?? `proactive:${input.inputTurnId}`,
       noticeKey: 'proactive-final-fallback',
       text: input.text,
-      sender: 'happyclaw-agent',
+      sender: 'miniclaw-agent',
       senderName: ASSISTANT_NAME,
       agentId: input.agentId,
       presentation: 'native',
@@ -9488,16 +9488,16 @@ async function runAgent(
   }
   const sessionId = sessions[group.folder];
   const containerAgentProfile = toContainerAgentProfile(resolvedAgentProfile);
-  const happyClawOwnerProfile = resolveHappyClawOwnerProfileForTurn({
+  const miniclawOwnerProfile = resolveMiniclawOwnerProfileForTurn({
     group,
     profile: resolvedAgentProfile,
     turnId,
     isScheduledTask: Boolean(messageTaskId),
   });
-  const happyClawBootstrapPending =
-    happyClawOwnerProfile?.onboarding.state === 'pending' ||
-    happyClawOwnerProfile?.onboarding.state === 'claimed';
-  const happyClawOwnerProfileEnabled = isHappyClawOwnerProfileRuntimeEligible({
+  const miniclawBootstrapPending =
+    miniclawOwnerProfile?.onboarding.state === 'pending' ||
+    miniclawOwnerProfile?.onboarding.state === 'claimed';
+  const miniclawOwnerProfileEnabled = isMiniclawOwnerProfileRuntimeEligible({
     group,
     profile: resolvedAgentProfile,
     turnId,
@@ -9630,9 +9630,9 @@ async function runAgent(
           isMain: isAdminHome,
           isHome,
           isAdminHome,
-          happyClawBootstrapPending,
-          happyClawOwnerProfile,
-          happyClawOwnerProfileEnabled,
+          miniclawBootstrapPending,
+          miniclawOwnerProfile,
+          miniclawOwnerProfileEnabled,
           agentBuilderEnabled: resolvedAgentProfile?.is_default === true,
           images,
           messageTaskId,
@@ -9659,9 +9659,9 @@ async function runAgent(
           isMain: isAdminHome,
           isHome,
           isAdminHome,
-          happyClawBootstrapPending,
-          happyClawOwnerProfile,
-          happyClawOwnerProfileEnabled,
+          miniclawBootstrapPending,
+          miniclawOwnerProfile,
+          miniclawOwnerProfileEnabled,
           agentBuilderEnabled: resolvedAgentProfile?.is_default === true,
           images,
           messageTaskId,
@@ -9766,7 +9766,7 @@ async function sendMessageWithOutcome(
         ? storeScheduledGroupWorkspaceResultAndFinalize({
             messageId: msgId,
             chatJid: jid,
-            senderId: 'happyclaw-agent',
+            senderId: 'miniclaw-agent',
             senderName: ASSISTANT_NAME,
             text,
             timestamp,
@@ -9778,7 +9778,7 @@ async function sendMessageWithOutcome(
             return storeMessageDirect(
               msgId,
               jid,
-              'happyclaw-agent',
+              'miniclaw-agent',
               ASSISTANT_NAME,
               text,
               timestamp,
@@ -9793,7 +9793,7 @@ async function sendMessageWithOutcome(
       {
         id: persistedMsgId,
         chat_jid: jid,
-        sender: 'happyclaw-agent',
+        sender: 'miniclaw-agent',
         sender_name: ASSISTANT_NAME,
         content: text,
         timestamp,
@@ -9865,7 +9865,7 @@ function saveInterruptedStreamingMessages(): void {
       storeMessageDirect(
         msgId,
         jid,
-        'happyclaw-agent',
+        'miniclaw-agent',
         ASSISTANT_NAME,
         interruptedText,
         timestamp,
@@ -9972,7 +9972,7 @@ function recoverStreamingBuffer(): void {
           storeMessageDirect(
             msgId,
             jid,
-            'happyclaw-agent',
+            'miniclaw-agent',
             ASSISTANT_NAME,
             interruptedText,
             timestamp,
@@ -11011,7 +11011,7 @@ function startIpcWatcher(): void {
                   const persistedImgMsgId = storeMessageDirect(
                     imgMsgId,
                     imgChatJid,
-                    'happyclaw-agent',
+                    'miniclaw-agent',
                     ASSISTANT_NAME,
                     displayText,
                     imgTimestamp,
@@ -11021,7 +11021,7 @@ function startIpcWatcher(): void {
                   broadcastNewMessage(imgChatJid, {
                     id: persistedImgMsgId,
                     chat_jid: imgChatJid,
-                    sender: 'happyclaw-agent',
+                    sender: 'miniclaw-agent',
                     sender_name: ASSISTANT_NAME,
                     content: displayText,
                     timestamp: imgTimestamp,
@@ -11243,7 +11243,7 @@ function startIpcWatcher(): void {
           'agent_profile_publish_result_',
           'agent_profile_discard_result_',
           'workspace_memory_result_',
-          'happyclaw_owner_profile_result_',
+          'miniclaw_owner_profile_result_',
         ];
         const isResultFile = (name: string) =>
           RESULT_FILE_PREFIXES.some((p) => name.startsWith(p));
@@ -11823,11 +11823,11 @@ async function processTaskIpc(
   };
 
   switch (data.type) {
-    case 'happyclaw_owner_profile': {
+    case 'miniclaw_owner_profile': {
       const finish = (payload: Record<string, unknown>): void =>
         writeTaskResult(
           tasksDir,
-          'happyclaw_owner_profile',
+          'miniclaw_owner_profile',
           data.requestId,
           payload,
         );
@@ -11854,7 +11854,7 @@ async function processTaskIpc(
                 'Owner Profile runner identity is required',
               );
             }
-            const claim = claimHappyClawOwnerIntroduction({
+            const claim = claimMiniclawOwnerIntroduction({
               workspaceJid: principal.workspaceJid,
               leaseOwner: data.runnerInstanceId,
             });
@@ -11889,7 +11889,7 @@ async function processTaskIpc(
                 'Owner Profile lease token is required',
               );
             }
-            result = acknowledgeHappyClawOwnerIntroduction({
+            result = acknowledgeMiniclawOwnerIntroduction({
               workspaceJid: principal.workspaceJid,
               leaseOwner: data.runnerInstanceId,
               leaseToken: data.leaseToken!,
@@ -11897,7 +11897,7 @@ async function processTaskIpc(
             break;
           }
           case 'set':
-            result = setHappyClawOwnerPreferredAddress({
+            result = setMiniclawOwnerPreferredAddress({
               workspaceJid: principal.workspaceJid,
               preferredAddress: data.preferredAddress ?? '',
               expectedRevision: data.expectedRevision,
@@ -11912,7 +11912,7 @@ async function processTaskIpc(
                 'expectedRevision is required to clear the Owner Profile',
               );
             }
-            result = clearHappyClawOwnerPreferredAddress({
+            result = clearMiniclawOwnerPreferredAddress({
               workspaceJid: principal.workspaceJid,
               expectedRevision: data.expectedRevision!,
               idempotencyKey: data.idempotencyKey,
@@ -11920,7 +11920,7 @@ async function processTaskIpc(
             });
             break;
           case 'skip':
-            result = skipHappyClawOwnerIntroduction({
+            result = skipMiniclawOwnerIntroduction({
               workspaceJid: principal.workspaceJid,
               expectedOnboardingRevision: data.expectedOnboardingRevision,
               context: principal.context,
@@ -13284,7 +13284,7 @@ async function processTaskIpc(
             ...outboxScope,
             requestId: data.requestId,
             request,
-            owner: `happyclaw-feishu-capability:${process.pid}:${outboxScope.turnRunId}`,
+            owner: `miniclaw-feishu-capability:${process.pid}:${outboxScope.turnRunId}`,
             execute: () =>
               imManager.executeFeishuCapability(
                 activeTurn.sourceJid,
@@ -14708,7 +14708,7 @@ async function processAgentConversation(
       storeMessageDirect(
         msgId,
         virtualChatJid,
-        'happyclaw-agent',
+        'miniclaw-agent',
         ASSISTANT_NAME,
         joined,
         timestamp,
@@ -14727,7 +14727,7 @@ async function processAgentConversation(
         {
           id: msgId,
           chat_jid: virtualChatJid,
-          sender: 'happyclaw-agent',
+          sender: 'miniclaw-agent',
           sender_name: ASSISTANT_NAME,
           content: joined,
           timestamp,
@@ -15529,7 +15529,7 @@ async function processAgentConversation(
               const persistedMsgId = storeMessageDirect(
                 msgId,
                 virtualChatJid,
-                'happyclaw-agent',
+                'miniclaw-agent',
                 ASSISTANT_NAME,
                 interruptedText,
                 timestamp,
@@ -15549,7 +15549,7 @@ async function processAgentConversation(
                 {
                   id: persistedMsgId,
                   chat_jid: virtualChatJid,
-                  sender: 'happyclaw-agent',
+                  sender: 'miniclaw-agent',
                   sender_name: ASSISTANT_NAME,
                   content: interruptedText,
                   timestamp,
@@ -15905,7 +15905,7 @@ async function processAgentConversation(
         const persistedMsgId = storeMessageDirect(
           msgId,
           virtualChatJid,
-          'happyclaw-agent',
+          'miniclaw-agent',
           ASSISTANT_NAME,
           dbText,
           timestamp,
@@ -15932,7 +15932,7 @@ async function processAgentConversation(
           {
             id: persistedMsgId,
             chat_jid: virtualChatJid,
-            sender: 'happyclaw-agent',
+            sender: 'miniclaw-agent',
             sender_name: ASSISTANT_NAME,
             content: dbText,
             timestamp,
@@ -16352,7 +16352,7 @@ async function processAgentConversation(
       });
     };
 
-    const happyClawOwnerProfile = resolveHappyClawOwnerProfileForTurn({
+    const miniclawOwnerProfile = resolveMiniclawOwnerProfileForTurn({
       group: effectiveGroup,
       profile: agentProfile,
       turnId: lastProcessed.id,
@@ -16360,7 +16360,7 @@ async function processAgentConversation(
       runtimeAgentId: agentId,
       runtimeAgentKind: agent.kind,
     });
-    const happyClawOwnerProfileEnabled = isHappyClawOwnerProfileRuntimeEligible(
+    const miniclawOwnerProfileEnabled = isMiniclawOwnerProfileRuntimeEligible(
       {
         group: effectiveGroup,
         profile: agentProfile,
@@ -16385,11 +16385,11 @@ async function processAgentConversation(
       isAdminHome,
       agentBuilderEnabled:
         agent.kind === 'conversation' && agentProfile?.is_default === true,
-      happyClawBootstrapPending:
-        happyClawOwnerProfile?.onboarding.state === 'pending' ||
-        happyClawOwnerProfile?.onboarding.state === 'claimed',
-      happyClawOwnerProfile,
-      happyClawOwnerProfileEnabled,
+      miniclawBootstrapPending:
+        miniclawOwnerProfile?.onboarding.state === 'pending' ||
+        miniclawOwnerProfile?.onboarding.state === 'claimed',
+      miniclawOwnerProfile,
+      miniclawOwnerProfileEnabled,
       agentId,
       agentName: agent.name,
       images: imagesForAgent,
@@ -16796,7 +16796,7 @@ async function processAgentConversation(
           const persistedMsgId = storeMessageDirect(
             msgId,
             virtualChatJid,
-            'happyclaw-agent',
+            'miniclaw-agent',
             ASSISTANT_NAME,
             interruptedText,
             timestamp,
@@ -16815,7 +16815,7 @@ async function processAgentConversation(
             {
               id: persistedMsgId,
               chat_jid: virtualChatJid,
-              sender: 'happyclaw-agent',
+              sender: 'miniclaw-agent',
               sender_name: ASSISTANT_NAME,
               content: interruptedText,
               timestamp,
@@ -16852,7 +16852,7 @@ async function processAgentConversation(
         const persistedMsgId = storeMessageDirect(
           msgId,
           virtualChatJid,
-          'happyclaw-agent',
+          'miniclaw-agent',
           ASSISTANT_NAME,
           partialReply,
           timestamp,
@@ -16871,7 +16871,7 @@ async function processAgentConversation(
           {
             id: persistedMsgId,
             chat_jid: virtualChatJid,
-            sender: 'happyclaw-agent',
+            sender: 'miniclaw-agent',
             sender_name: ASSISTANT_NAME,
             content: partialReply,
             timestamp,
@@ -16943,7 +16943,7 @@ async function processAgentConversation(
         storeMessageDirect(
           injectId,
           agent.spawned_from_jid,
-          'happyclaw-agent',
+          'miniclaw-agent',
           ASSISTANT_NAME,
           resultText,
           injectTs,
@@ -16952,7 +16952,7 @@ async function processAgentConversation(
         broadcastNewMessage(agent.spawned_from_jid, {
           id: injectId,
           chat_jid: agent.spawned_from_jid,
-          sender: 'happyclaw-agent',
+          sender: 'miniclaw-agent',
           sender_name: ASSISTANT_NAME,
           content: resultText,
           timestamp: injectTs,
@@ -17025,7 +17025,7 @@ async function startMessageLoop(): Promise<void> {
   }
   messageLoopRunning = true;
 
-  logger.info('happyclaw running');
+  logger.info('miniclaw running');
 
   while (!shuttingDown) {
     try {
@@ -17306,7 +17306,7 @@ async function startMessageLoop(): Promise<void> {
           // already active this IPC path (not the cold-start runContainerAgent
           // path) handles delivery, so it must carry task_id too — otherwise the
           // task's send_message output loses task attribution and the host skips
-          // the notify_channels broadcast (riba2534/happyclaw#559).
+          // the notify_channels broadcast (helsome/miniclaw#559).
           const injectionTaskId = extractLastTaskId(messagesToSend);
 
           const sendResult = queue.sendMessage(
@@ -21546,6 +21546,6 @@ async function checkImBindingsHealth(): Promise<void> {
 }
 
 main().catch((err) => {
-  logger.error({ err }, 'Failed to start happyclaw');
+  logger.error({ err }, 'Failed to start miniclaw');
   process.exit(1);
 });

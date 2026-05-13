@@ -5,7 +5,7 @@ import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 
 const tmpDir = fs.mkdtempSync(
-  path.join(os.tmpdir(), 'happyclaw-system-settings-security-'),
+  path.join(os.tmpdir(), 'miniclaw-system-settings-security-'),
 );
 
 vi.mock('../src/config.js', async (importOriginal) => {
@@ -32,9 +32,9 @@ vi.mock('../src/middleware/auth.ts', async (importOriginal) => {
         id: 'settings-security-user',
         username: 'settings-security-user',
         display_name: 'Settings Security User',
-        role: process.env.HAPPYCLAW_TEST_ROLE ?? 'member',
+        role: process.env.MINICLAW_TEST_ROLE ?? 'member',
         status: 'active',
-        permissions: JSON.parse(process.env.HAPPYCLAW_TEST_PERMISSIONS ?? '[]'),
+        permissions: JSON.parse(process.env.MINICLAW_TEST_PERMISSIONS ?? '[]'),
         must_change_password: false,
       });
       return next();
@@ -83,8 +83,8 @@ const app = web.createAppForTest({
 } as any);
 
 function asUser(role: 'admin' | 'member', permissions: string[] = []): void {
-  process.env.HAPPYCLAW_TEST_ROLE = role;
-  process.env.HAPPYCLAW_TEST_PERMISSIONS = JSON.stringify(permissions);
+  process.env.MINICLAW_TEST_ROLE = role;
+  process.env.MINICLAW_TEST_PERMISSIONS = JSON.stringify(permissions);
 }
 
 beforeAll(() => {
@@ -106,8 +106,8 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  delete process.env.HAPPYCLAW_TEST_ROLE;
-  delete process.env.HAPPYCLAW_TEST_PERMISSIONS;
+  delete process.env.MINICLAW_TEST_ROLE;
+  delete process.env.MINICLAW_TEST_PERMISSIONS;
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 

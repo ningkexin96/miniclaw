@@ -330,7 +330,7 @@ describe('executeInlineBashDocker', () => {
   test('builds docker exec argv with -e CLAUDE_PLUGIN_ROOT/ARGUMENTS + bash -c <cmd> -- posArgs', async () => {
     const stub = makeSpawnStub();
     const promise = executeInlineBashDocker(
-      'happyclaw-agent-abc',
+      'miniclaw-agent-abc',
       'echo "$ARGUMENTS"',
       ['--flag', 'val'],
       {
@@ -358,7 +358,7 @@ describe('executeInlineBashDocker', () => {
       'CLAUDE_PLUGIN_ROOT=/workspace/plugins/snapshots/sha/mp/p',
       '-e',
       'ARGUMENTS=--flag val',
-      'happyclaw-agent-abc',
+      'miniclaw-agent-abc',
       'bash',
       '-c',
       'echo "$ARGUMENTS"',

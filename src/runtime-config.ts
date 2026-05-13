@@ -81,17 +81,14 @@ const RESERVED_CLAUDE_ENV_KEYS = new Set([
   'ANTHROPIC_BASE_URL',
   'ANTHROPIC_AUTH_TOKEN',
   'ANTHROPIC_MODEL',
-  'HAPPYCLAW_CLAUDE_ENDPOINT_KIND',
-  'HAPPYCLAW_FALLBACK_MODEL',
   'MINICLAW_CLAUDE_ENDPOINT_KIND',
   'MINICLAW_FALLBACK_MODEL',
 ]);
 
-export const CLAUDE_ENDPOINT_KIND_ENV = 'HAPPYCLAW_CLAUDE_ENDPOINT_KIND';
+export const CLAUDE_ENDPOINT_KIND_ENV = 'MINICLAW_CLAUDE_ENDPOINT_KIND';
 
 const INHERITED_CLAUDE_PROVIDER_ENV_KEYS = [
   CLAUDE_ENDPOINT_KIND_ENV,
-  'MINICLAW_CLAUDE_ENDPOINT_KIND',
   'CLAUDE_CODE_OAUTH_TOKEN',
   'ANTHROPIC_BASE_URL',
   'ANTHROPIC_AUTH_TOKEN',
@@ -185,13 +182,9 @@ const DANGEROUS_ENV_VARS = new Set([
   'TEMP',
   'TMP',
   // Miniclaw 内部路径映射
-  'HAPPYCLAW_WORKSPACE_GROUP',
   'MINICLAW_WORKSPACE_GROUP',
-  // Legacy internal names remain blocked for rollback/old-runner safety even
-  // though the current runtime no longer reads or mounts these paths.
-  'HAPPYCLAW_WORKSPACE_GLOBAL',
-  'HAPPYCLAW_WORKSPACE_MEMORY',
-  'HAPPYCLAW_WORKSPACE_IPC',
+  'MINICLAW_WORKSPACE_GLOBAL',
+  'MINICLAW_WORKSPACE_MEMORY',
   'MINICLAW_WORKSPACE_IPC',
   'CLAUDE_CONFIG_DIR',
 ]);
@@ -201,15 +194,13 @@ function isDangerousEnvKey(key: string): boolean {
     DANGEROUS_ENV_VARS.has(key) ||
     key.startsWith('MINICLAW_SESSION_') ||
     key.startsWith('MINICLAW_INTERNAL_') ||
-    key.startsWith('HAPPYCLAW_SESSION_') ||
-    key.startsWith('HAPPYCLAW_INTERNAL_') ||
-    key === 'HAPPYCLAW_HOST_IDENTITY_MODE' ||
-    key === 'HAPPYCLAW_HOST_UID' ||
-    key === 'HAPPYCLAW_HOST_GID' ||
-    key === 'HAPPYCLAW_PASSWD_FILE' ||
-    key === 'HAPPYCLAW_RECONCILE_SESSION_PERMISSIONS' ||
-    key === 'HAPPYCLAW_MOUNT_PREPARE_MODE' ||
-    key === 'HAPPYCLAW_RUNTIME_USER'
+    key === 'MINICLAW_HOST_IDENTITY_MODE' ||
+    key === 'MINICLAW_HOST_UID' ||
+    key === 'MINICLAW_HOST_GID' ||
+    key === 'MINICLAW_PASSWD_FILE' ||
+    key === 'MINICLAW_RECONCILE_SESSION_PERMISSIONS' ||
+    key === 'MINICLAW_MOUNT_PREPARE_MODE' ||
+    key === 'MINICLAW_RUNTIME_USER'
   );
 }
 const MAX_CUSTOM_ENV_ENTRIES = 50;
@@ -859,7 +850,7 @@ function fromStoredProfile(
     anthropicBaseUrl: normalizeBaseUrl(stored.anthropicBaseUrl),
     anthropicAuthToken: secrets.anthropicAuthToken,
     anthropicModel: normalizeModel(
-      stored.anthropicModel ?? (stored as any).happyclawModel ?? '',
+      stored.anthropicModel ?? (stored as any).miniclawModel ?? '',
     ),
     updatedAt: stored.updatedAt || null,
     customEnv: sanitizeCustomEnvMap(stored.customEnv || {}, {
@@ -2854,14 +2845,14 @@ export function getContainerEnvConfig(folder: string): ContainerEnvConfig {
     if (fs.existsSync(filePath)) {
       const stored = JSON.parse(
         fs.readFileSync(filePath, 'utf-8'),
-      ) as ContainerEnvConfig & { happyclawModel?: string };
+      ) as ContainerEnvConfig & { miniclawModel?: string };
       // Backward compat: migrate old field name
       if (
         stored.anthropicModel === undefined &&
-        stored.happyclawModel !== undefined
+        stored.miniclawModel !== undefined
       ) {
-        stored.anthropicModel = stored.happyclawModel;
-        delete stored.happyclawModel;
+        stored.anthropicModel = stored.miniclawModel;
+        delete stored.miniclawModel;
       }
       return stored;
     }

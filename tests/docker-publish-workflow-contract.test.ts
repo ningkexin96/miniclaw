@@ -63,11 +63,11 @@ describe('Docker image distribution contract', () => {
 
   test('builds only in GitHub Actions and pulls published images at runtime', () => {
     expect(read('src/config.ts')).toContain(
-      "'riba2534/happyclaw-agent:latest'",
+      "'helsome/miniclaw-agent:latest'",
     );
     const makefile = read('Makefile');
     expect(makefile).toContain(
-      'CONTAINER_IMAGE ?= riba2534/happyclaw-agent:latest',
+      'CONTAINER_IMAGE ?= helsome/miniclaw-agent:latest',
     );
     expect(makefile).toContain('docker-pull:');
     expect(makefile).toContain('docker pull "$(CONTAINER_IMAGE)"');
@@ -110,15 +110,15 @@ describe('Docker image distribution contract', () => {
 
     expect(smoke).toContain('docker run --detach --interactive');
     expect(smoke).not.toContain('--entrypoint');
-    expect(smoke).toContain('--env HAPPYCLAW_HOST_IDENTITY_MODE=host-root');
-    expect(smoke).toContain('--env HAPPYCLAW_HOST_IDENTITY_MODE=direct');
-    expect(smoke).toContain('--env "HAPPYCLAW_HOST_UID=$smoke_host_uid"');
-    expect(smoke).toContain('--env "HAPPYCLAW_HOST_GID=$smoke_host_gid"');
+    expect(smoke).toContain('--env MINICLAW_HOST_IDENTITY_MODE=host-root');
+    expect(smoke).toContain('--env MINICLAW_HOST_IDENTITY_MODE=direct');
+    expect(smoke).toContain('--env "MINICLAW_HOST_UID=$smoke_host_uid"');
+    expect(smoke).toContain('--env "MINICLAW_HOST_GID=$smoke_host_gid"');
     expect(smoke).toContain('"${smoke_identity_args[@]}"');
     expect(smoke).not.toContain(
-      '--env HAPPYCLAW_HOST_IDENTITY_MODE=virtualized',
+      '--env MINICLAW_HOST_IDENTITY_MODE=virtualized',
     );
-    expect(smoke).not.toContain('--env HAPPYCLAW_HOST_IDENTITY_MODE=rootless');
+    expect(smoke).not.toContain('--env MINICLAW_HOST_IDENTITY_MODE=rootless');
     expect(smoke).toContain(
       '--tmpfs /home/node/.claude:rw,nosuid,nodev,noexec',
     );

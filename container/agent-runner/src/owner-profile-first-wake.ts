@@ -1,4 +1,4 @@
-import type { HappyClawOwnerProfileTurnResult } from './mcp-tools.js';
+import type { MiniclawOwnerProfileTurnResult } from './mcp-tools.js';
 
 interface PendingFirstWakeAcknowledgement {
   inputTurnId: string;
@@ -10,12 +10,12 @@ interface PendingFirstWakeAcknowledgement {
  * Registration alone is side-effect free; only an explicit healthy
  * top-level Assistant observation asks the private IPC control plane to ACK.
  */
-export class HappyClawFirstWakeAcknowledger {
+export class MiniclawFirstWakeAcknowledger {
   private readonly pending = new Map<string, PendingFirstWakeAcknowledgement>();
 
   register(
     inputTurnId: string,
-    result: HappyClawOwnerProfileTurnResult | null,
+    result: MiniclawOwnerProfileTurnResult | null,
   ): boolean {
     const leaseToken = result?.projection.onboarding.leaseToken;
     if (

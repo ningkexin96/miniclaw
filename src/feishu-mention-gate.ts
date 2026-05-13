@@ -41,7 +41,7 @@ export interface MentionGateInput {
     allowWithoutMention: boolean;
   };
   /**
-   * 来自 happyclaw 主进程：根据该群 activation_mode / require_mention
+   * 来自 miniclaw 主进程：根据该群 activation_mode / require_mention
    * 决定"是否允许免 @"。
    *   - 返回 true → always 模式，放行；
    *   - 返回 false → when_mentioned / owner_mentioned，必须确认 bot 被 @。

@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
-  return { ...real, DATA_DIR: '/tmp/happyclaw-query-identity-test' };
+  return { ...real, DATA_DIR: '/tmp/miniclaw-query-identity-test' };
 });
 vi.mock('../src/logger.js', () => ({
   logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },

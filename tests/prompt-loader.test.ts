@@ -22,8 +22,8 @@ const REQUIRED_FILES = [
   'delivery-contract.assistant.md',
   'delivery-contract.proactive.md',
   'memory-system.workspace.md',
-  'identity.happyclaw.md',
-  'bootstrap.happyclaw.md',
+  'identity.miniclaw.md',
+  'bootstrap.miniclaw.md',
 ];
 
 const REQUIRED_CHANNELS = [
@@ -113,11 +113,11 @@ describe('prompts/ files', () => {
 
   test('built-in Miniclaw identity and one-shot owner bootstrap are explicit', () => {
     const identity = fs.readFileSync(
-      path.join(PROMPTS_DIR, 'identity.happyclaw.md'),
+      path.join(PROMPTS_DIR, 'identity.miniclaw.md'),
       'utf-8',
     );
     const bootstrap = fs.readFileSync(
-      path.join(PROMPTS_DIR, 'bootstrap.happyclaw.md'),
+      path.join(PROMPTS_DIR, 'bootstrap.miniclaw.md'),
       'utf-8',
     );
 
@@ -126,8 +126,8 @@ describe('prompts/ files', () => {
     expect(identity).toContain('Home Workspace');
     expect(identity).toContain('Agent Builder');
     expect(bootstrap).toContain('刚醒来/刚刚启动');
-    expect(bootstrap).toContain('happyclaw.owner.preferred_address');
-    expect(bootstrap).toContain('happyclaw_owner_profile');
+    expect(bootstrap).toContain('miniclaw.owner.preferred_address');
+    expect(bootstrap).toContain('miniclaw_owner_profile');
     expect(bootstrap).toContain('禁止用通用 `workspace_memory_*`');
   });
 

@@ -6,7 +6,7 @@ import { shouldUseHashRouter } from './utils/url';
 import { cleanupLegacyPwaArtifacts } from './utils/legacyPwaCleanup';
 
 if (typeof window !== 'undefined') {
-  window.__HAPPYCLAW_HASH_ROUTER__ = shouldUseHashRouter();
+  window.__MINICLAW_HASH_ROUTER__ = shouldUseHashRouter();
 
   // Prevent pinch-to-zoom on iOS (iOS 10+ ignores user-scalable=no).
   // 多指缩放由 globals.css 的 `touch-action: pan-x pan-y` 声明式拦截；这里只保留

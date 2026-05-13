@@ -21,7 +21,7 @@ describe('conversation history recovery context', () => {
       {
         id: 'assistant-1',
         content: '收到',
-        sender_name: 'HappyClaw',
+        sender_name: 'Miniclaw',
         is_from_me: true,
       },
       {

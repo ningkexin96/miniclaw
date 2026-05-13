@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const COLLAPSED_AGENTS_KEY = 'happyclaw:collapsed-agent-sections';
+const COLLAPSED_AGENTS_KEY = 'miniclaw:collapsed-agent-sections';
 
 function readCollapsedAgents(): Set<string> {
   try {

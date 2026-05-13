@@ -447,7 +447,7 @@ describe('buildAgentReplyCard', () => {
 
   test('long single-line reply → 已完成 header, keeps full text in body', () => {
     const text =
-      'HappyClaw: 脚本 Updated slot: Token usage 明细很长，需要在卡片正文完整展示，不能只剩截断标题';
+      'Miniclaw: 脚本 Updated slot: Token usage 明细很长，需要在卡片正文完整展示，不能只剩截断标题';
     const card = buildAgentReplyCard({ status: 'done', text });
     // a long reply must NOT be lifted/truncated into the header title.
     const header = card.header as Record<string, unknown>;

@@ -85,7 +85,7 @@ function seedCatalogSnapshot(opts: {
 }
 
 beforeEach(() => {
-  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-mat-'));
+  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-mat-'));
 });
 
 afterEach(() => {
@@ -171,10 +171,10 @@ describe('materializeUserRuntime', () => {
 
     // Marker is at sibling path (snapshot root), NOT inside plugin root.
     expect(
-      fs.existsSync(path.join(rtDir, '@happyclaw-runtime-markers')),
+      fs.existsSync(path.join(rtDir, '@miniclaw-runtime-markers')),
     ).toBe(false);
     const markerPath = path.join(
-      getUserSnapshotsDir(USER), 'sha256-aaa', '@happyclaw-runtime-markers', 'mp1', 'p1.json',
+      getUserSnapshotsDir(USER), 'sha256-aaa', '@miniclaw-runtime-markers', 'mp1', 'p1.json',
     );
     expect(fs.existsSync(markerPath)).toBe(true);
     const marker = JSON.parse(fs.readFileSync(markerPath, 'utf-8'));
@@ -288,7 +288,7 @@ describe('materializeUserRuntime', () => {
 
     // Marker present at sibling path.
     const markerPath = path.join(
-      getUserSnapshotsDir(USER), 'sha256-aaa', '@happyclaw-runtime-markers', 'mp1', 'p1.json',
+      getUserSnapshotsDir(USER), 'sha256-aaa', '@miniclaw-runtime-markers', 'mp1', 'p1.json',
     );
     expect(fs.existsSync(markerPath)).toBe(true);
 
@@ -388,7 +388,7 @@ describe('materializeUserRuntime', () => {
 
     // Corrupt the marker.
     const markerPath = path.join(
-      getUserSnapshotsDir(USER), 'sha256-aaa', '@happyclaw-runtime-markers', 'mp1', 'p1.json',
+      getUserSnapshotsDir(USER), 'sha256-aaa', '@miniclaw-runtime-markers', 'mp1', 'p1.json',
     );
     fs.writeFileSync(markerPath, '{"materializerVersion":999}', 'utf-8');
 

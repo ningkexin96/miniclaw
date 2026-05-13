@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-routes-usage-'));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-routes-usage-'));
 const store = path.join(tmp, 'db');
 const groups = path.join(tmp, 'groups');
 fs.mkdirSync(store, { recursive: true });

@@ -18,7 +18,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
-  return { ...real, DATA_DIR: '/tmp/happyclaw-queue-reentrancy-test' };
+  return { ...real, DATA_DIR: '/tmp/miniclaw-queue-reentrancy-test' };
 });
 
 vi.mock('../src/logger.js', () => ({

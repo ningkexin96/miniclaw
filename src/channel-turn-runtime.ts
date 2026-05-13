@@ -82,7 +82,7 @@ export class ChannelTurnRuntime {
     this.input = input;
     this.idempotencyKey = logicalKey(input);
     this.runId = `turn_${digest(this.idempotencyKey)}`;
-    this.owner = `happyclaw:${process.pid}:${crypto.randomUUID()}`;
+    this.owner = `miniclaw:${process.pid}:${crypto.randomUUID()}`;
     this.leaseMs = Math.max(5_000, input.leaseMs ?? DEFAULT_LEASE_MS);
     this.heartbeatMs = Math.max(
       1_000,

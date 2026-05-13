@@ -90,7 +90,7 @@ describe('reproducible build contract', () => {
       'github.com/riba2534/feishu-cli/releases/latest/download',
     );
     expect(dockerfile).toContain('sha256sum -c checksum.txt');
-    expect(dockerfile).toContain('happyclaw-tool-versions.txt');
+    expect(dockerfile).toContain('miniclaw-tool-versions.txt');
     expect(dockerfile).toContain("version('headroom-ai')");
     expect(dockerfile).toContain('PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1');
     expect(dockerfile).not.toContain('npm install -g');

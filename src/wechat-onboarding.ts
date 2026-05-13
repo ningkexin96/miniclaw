@@ -5,7 +5,7 @@ import { createWeChatHttpDispatcher } from './wechat-http.js';
 const WECHAT_API_BASE = 'https://ilinkai.weixin.qq.com';
 const WECHAT_QR_BOT_TYPE = '3';
 const WECHAT_ILINK_APP_ID = 'bot';
-const HAPPYCLAW_CHANNEL_VERSION = '1.0.0';
+const MINICLAW_CHANNEL_VERSION = '1.0.0';
 
 export type WeChatQrStatusValue =
   | 'wait'
@@ -61,7 +61,7 @@ export function weChatIlinkHeaders(): Record<string, string> {
   return {
     'iLink-App-Id': WECHAT_ILINK_APP_ID,
     'iLink-App-ClientVersion': String(
-      encodeWeChatClientVersion(HAPPYCLAW_CHANNEL_VERSION),
+      encodeWeChatClientVersion(MINICLAW_CHANNEL_VERSION),
     ),
   };
 }

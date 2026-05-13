@@ -1,5 +1,5 @@
 /**
- * Container Runner for happyclaw
+ * Container Runner for miniclaw
  * Spawns agent execution in Docker container and handles IPC
  */
 import {
@@ -51,7 +51,7 @@ import {
   revokeWorkspaceMemoryWriteCapability,
   type WorkspaceMemoryCapabilityScope,
 } from './workspace-memory-capability.js';
-import { releaseHappyClawOwnerIntroductionLease } from './owner-profile-store.js';
+import { releaseMiniclawOwnerIntroductionLease } from './owner-profile-store.js';
 import {
   deleteSession,
   getUserById,
@@ -289,7 +289,7 @@ function ensureSettingsJson(
 ): void {
   const projectionFile = path.join(
     path.dirname(settingsFile),
-    '.happyclaw-native-settings.json',
+    '.miniclaw-native-settings.json',
   );
   const current = readSettingsRecord(settingsFile);
   const previousProjection = readSettingsRecord(projectionFile);
@@ -395,13 +395,13 @@ export interface ContainerInput {
    * True only for an interactive turn in the built-in Miniclaw Home
    * Workspace before the owner-preferred-address memory has been established.
    */
-  happyClawBootstrapPending?: boolean;
+  miniclawBootstrapPending?: boolean;
   /**
    * Host-authoritative initial Owner Profile projection. Present only for an
    * actual-owner interactive turn of built-in Miniclaw in Home. The runner
    * refreshes it over dedicated IPC before every cold/warm model turn.
    */
-  happyClawOwnerProfile?: {
+  miniclawOwnerProfile?: {
     workspaceJid: string;
     preferredAddress: string | null;
     revision: number | null;
@@ -415,7 +415,7 @@ export interface ContainerInput {
   };
   /** Structural capability only; exact owner authorization is re-evaluated by
    * the host for every dedicated IPC request, including warm turns. */
-  happyClawOwnerProfileEnabled?: boolean;
+  miniclawOwnerProfileEnabled?: boolean;
   /** Host-derived capability flag for main-Miniclaw interactive sessions. */
   agentBuilderEnabled?: boolean;
   agentId?: string;
@@ -529,9 +529,9 @@ export function replaceHostMcpServersEnv(
   env: Record<string, string>,
   servers: Record<string, Record<string, unknown>>,
 ): void {
-  delete env['HAPPYCLAW_USER_MCP_SERVERS_JSON'];
+  delete env['MINICLAW_USER_MCP_SERVERS_JSON'];
   if (Object.keys(servers).length > 0) {
-    env['HAPPYCLAW_USER_MCP_SERVERS_JSON'] = JSON.stringify(servers);
+    env['MINICLAW_USER_MCP_SERVERS_JSON'] = JSON.stringify(servers);
   }
 }
 
@@ -991,13 +991,13 @@ export function applyFallbackModelToEnvLines(
   configuredFallbackModel = getSystemSettings().fallbackModel,
 ): void {
   for (let i = envLines.length - 1; i >= 0; i--) {
-    if (envLines[i].startsWith('HAPPYCLAW_FALLBACK_MODEL=')) {
+    if (envLines[i].startsWith('MINICLAW_FALLBACK_MODEL=')) {
       envLines.splice(i, 1);
     }
   }
   const fallbackModel = configuredFallbackModel?.trim();
   if (!fallbackModel) return;
-  envLines.push(`HAPPYCLAW_FALLBACK_MODEL=${fallbackModel}`);
+  envLines.push(`MINICLAW_FALLBACK_MODEL=${fallbackModel}`);
 }
 
 function assertRuntimeEnvPathSegment(value: string, label: string): string {
@@ -1384,9 +1384,9 @@ export function buildVolumeMounts(
     if (
       envLines[index]?.startsWith('AUTO_COMPACT_WINDOW=') ||
       envLines[index]?.startsWith('AUTO_COMPACT_PERCENTAGE=') ||
-      envLines[index]?.startsWith('HAPPYCLAW_AGENT_TOOL_POLICY=') ||
-      envLines[index]?.startsWith('HAPPYCLAW_AGENT_DISALLOWED_TOOLS=') ||
-      envLines[index]?.startsWith('HAPPYCLAW_AGENT_MCP_POLICY=')
+      envLines[index]?.startsWith('MINICLAW_AGENT_TOOL_POLICY=') ||
+      envLines[index]?.startsWith('MINICLAW_AGENT_DISALLOWED_TOOLS=') ||
+      envLines[index]?.startsWith('MINICLAW_AGENT_MCP_POLICY=')
     ) {
       envLines.splice(index, 1);
     }
@@ -1400,7 +1400,7 @@ export function buildVolumeMounts(
   }
   const mcpPolicyMode = getAgentProfileMcpPolicyMode(agentProfile);
   if (mcpPolicyMode !== 'inherit') {
-    envLines.push(`HAPPYCLAW_AGENT_MCP_POLICY=${mcpPolicyMode}`);
+    envLines.push(`MINICLAW_AGENT_MCP_POLICY=${mcpPolicyMode}`);
   }
   applyFallbackModelToEnvLines(envLines);
   applyFeishuCliBindingToEnvLines(envLines, feishuCliBinding);
@@ -1465,7 +1465,7 @@ export function buildVolumeMounts(
 
   // Prompts must ride along with the source for the same reason: the image
   // bakes a copy at build time, so a prompt file added after the last image
-  // build (e.g. identity.happyclaw.md) is missing inside the container while
+  // build (e.g. identity.miniclaw.md) is missing inside the container while
   // the freshly-mounted runner code already requires it — every container
   // startup then dies with ENOENT. The entrypoint's /tmp/prompts symlink
   // resolves through this mount.
@@ -1644,13 +1644,13 @@ export function buildContainerArgs(
 
   // Set timezone so container Node.js processes use local time (Asia/Shanghai)
   args.push('-e', `TZ=${tz}`);
-  args.push('-e', `HAPPYCLAW_HOST_IDENTITY_MODE=${hostIdentity.mode}`);
+  args.push('-e', `MINICLAW_HOST_IDENTITY_MODE=${hostIdentity.mode}`);
   if (hostIdentity.mode === 'direct') {
     if (isPositiveUnixId(hostIdentity.uid)) {
-      args.push('-e', `HAPPYCLAW_HOST_UID=${hostIdentity.uid}`);
+      args.push('-e', `MINICLAW_HOST_UID=${hostIdentity.uid}`);
     }
     if (isPositiveUnixId(hostIdentity.gid)) {
-      args.push('-e', `HAPPYCLAW_HOST_GID=${hostIdentity.gid}`);
+      args.push('-e', `MINICLAW_HOST_GID=${hostIdentity.gid}`);
     }
   }
 
@@ -2175,7 +2175,7 @@ export async function runContainerAgent(
       workspaceMemoryRunnerInstanceId,
     );
     try {
-      releaseHappyClawOwnerIntroductionLease(workspaceMemoryRunnerInstanceId);
+      releaseMiniclawOwnerIntroductionLease(workspaceMemoryRunnerInstanceId);
     } catch (err) {
       logger.warn(
         { err, runnerInstanceId: workspaceMemoryRunnerInstanceId },
@@ -2497,14 +2497,14 @@ export async function runHostAgent(
   // Per-run policy must replace, never merge with, a parent process value.
   // Otherwise disabled/custom MCP can inherit servers from an earlier wrapper
   // environment even when this run intentionally resolves to an empty set.
-  delete hostEnv['HAPPYCLAW_USER_MCP_SERVERS_JSON'];
+  delete hostEnv['MINICLAW_USER_MCP_SERVERS_JSON'];
   // Provider selection is authoritative. Do not let API settings inherited
   // from the Miniclaw parent process leak into a host-mode child after the
   // user switches providers (especially third-party -> official OAuth).
   clearInheritedClaudeProviderEnv(hostEnv);
 
   // Strip macOS launch-context vars that must not be inherited by child
-  // processes. When happyclaw is started by a background process manager
+  // processes. When miniclaw is started by a background process manager
   // (launchd / ssh / cron) outside a normal login session, XPC_FLAGS=0x2
   // leaks into the environment. The bundled bun/CFNetwork-based claude CLI then
   // can't reach mDNSResponder/securityd through XPC, so DNS resolution and the
@@ -2588,9 +2588,9 @@ export async function runHostAgent(
     }
     const fallbackModel = getSystemSettings().fallbackModel?.trim();
     if (fallbackModel) {
-      hostEnv['HAPPYCLAW_FALLBACK_MODEL'] = fallbackModel;
+      hostEnv['MINICLAW_FALLBACK_MODEL'] = fallbackModel;
     } else {
-      delete hostEnv['HAPPYCLAW_FALLBACK_MODEL'];
+      delete hostEnv['MINICLAW_FALLBACK_MODEL'];
     }
 
     // Third-party provider: unless this provider explicitly injects
@@ -2673,16 +2673,16 @@ export async function runHostAgent(
       hostEnv['AUTO_COMPACT_WINDOW'] = String(autoCompactWindow);
     }
     const hostMcpPolicyMode = getAgentProfileMcpPolicyMode(input.agentProfile);
-    delete hostEnv['HAPPYCLAW_AGENT_TOOL_POLICY'];
-    delete hostEnv['HAPPYCLAW_AGENT_DISALLOWED_TOOLS'];
-    delete hostEnv['HAPPYCLAW_AGENT_MCP_POLICY'];
+    delete hostEnv['MINICLAW_AGENT_TOOL_POLICY'];
+    delete hostEnv['MINICLAW_AGENT_DISALLOWED_TOOLS'];
+    delete hostEnv['MINICLAW_AGENT_MCP_POLICY'];
     if (hostMcpPolicyMode !== 'inherit') {
-      hostEnv['HAPPYCLAW_AGENT_MCP_POLICY'] = hostMcpPolicyMode;
+      hostEnv['MINICLAW_AGENT_MCP_POLICY'] = hostMcpPolicyMode;
     }
 
     // 路径映射
-    hostEnv['HAPPYCLAW_WORKSPACE_GROUP'] = groupDir;
-    hostEnv['HAPPYCLAW_WORKSPACE_IPC'] = groupIpcDir;
+    hostEnv['MINICLAW_WORKSPACE_GROUP'] = groupDir;
+    hostEnv['MINICLAW_WORKSPACE_IPC'] = groupIpcDir;
 
     // Resolve symlinks so CLAUDE_CONFIG_DIR ends up as the real on-disk path.
     // Host mode also goes through the synchronized session .claude directory so
@@ -3083,7 +3083,7 @@ export async function runHostAgent(
       workspaceMemoryRunnerInstanceId,
     );
     try {
-      releaseHappyClawOwnerIntroductionLease(workspaceMemoryRunnerInstanceId);
+      releaseMiniclawOwnerIntroductionLease(workspaceMemoryRunnerInstanceId);
     } catch (err) {
       logger.warn(
         { err, runnerInstanceId: workspaceMemoryRunnerInstanceId },

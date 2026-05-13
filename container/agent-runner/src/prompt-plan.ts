@@ -34,7 +34,7 @@ export interface PromptPlan {
   errors: string[];
 }
 
-export interface HappyClawPromptSources {
+export interface MiniclawPromptSources {
   platformIdentity?: string;
   platformBootstrap?: string;
   agentIdentity?: string;
@@ -145,14 +145,14 @@ function wrap(tag: string, text: string): string {
 }
 
 /** Build the main-agent platform contract in its documented, stable order. */
-export function buildHappyClawPromptPlan(
-  sources: HappyClawPromptSources,
+export function buildMiniclawPromptPlan(
+  sources: MiniclawPromptSources,
 ): PromptPlan {
   const inputs: PromptBlockInput[] = [];
 
   if (sources.platformIdentity) {
     inputs.push({
-      id: 'identity.happyclaw',
+      id: 'identity.miniclaw',
       version: 1,
       scope: 'main',
       owner: 'platform',
@@ -164,7 +164,7 @@ export function buildHappyClawPromptPlan(
 
   if (sources.platformBootstrap) {
     inputs.push({
-      id: 'bootstrap.happyclaw',
+      id: 'bootstrap.miniclaw',
       version: 1,
       scope: 'main',
       owner: 'platform',

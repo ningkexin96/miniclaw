@@ -50,7 +50,7 @@ function validateServerId(id: string): boolean {
     id.length > 0 &&
     id.length <= 256 &&
     /^[\w\-]+$/.test(id) &&
-    id !== 'happyclaw'
+    id !== 'miniclaw'
   );
 }
 
@@ -412,7 +412,7 @@ mcpServersRoutes.post('/', authMiddleware, async (c) => {
     return c.json(
       {
         error:
-          'Invalid server ID: must match /^[\\w\\-]+$/ and cannot be "happyclaw"',
+          'Invalid server ID: must match /^[\\w\\-]+$/ and cannot be "miniclaw"',
       },
       400,
     );

@@ -5,7 +5,7 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 
-const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-usage-v51-'));
+const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-usage-v51-'));
 const store = path.join(tmp, 'db');
 const groups = path.join(tmp, 'groups');
 fs.mkdirSync(store, { recursive: true });
@@ -646,7 +646,7 @@ describe('v51 usage event accounting', () => {
       'snapshot-message',
       'web:snapshot',
       'assistant',
-      'HappyClaw',
+      'Miniclaw',
       'done',
       '2026-07-16T06:00:00.000Z',
       true,

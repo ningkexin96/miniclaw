@@ -58,7 +58,7 @@ describe('AgentProfile runtime invalidation', () => {
     expect(effective?.runtime_policy.context.auto_compact_window).toBe(0);
     expect(effective?.runtime_policy.context.auto_compact_percentage).toBe(80);
     expect(effective?.identity_hash).toBe(
-      runtime.bindHappyClawPlatformIdentityHash(
+      runtime.bindMiniclawPlatformIdentityHash(
         db.computeAgentProfileIdentityHash(
           profile,
           effective!.runtime_policy,
@@ -98,7 +98,7 @@ describe('AgentProfile runtime invalidation', () => {
       ),
     );
     expect(effective.identity_hash).not.toBe(
-      runtime.bindHappyClawPlatformIdentityHash(effective.identity_hash),
+      runtime.bindMiniclawPlatformIdentityHash(effective.identity_hash),
     );
   });
 

@@ -17,10 +17,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 // (which is hoisted above this file's body and runs before our `await
 // import(...)` lines) can read a stable value.
 const SHARED_TMP =
-  process.env.HAPPYCLAW_TEST_DATA_DIR ??
+  process.env.MINICLAW_TEST_DATA_DIR ??
   (() => {
-    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-cr-mount-'));
-    process.env.HAPPYCLAW_TEST_DATA_DIR = d;
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-cr-mount-'));
+    process.env.MINICLAW_TEST_DATA_DIR = d;
     return d;
   })();
 
@@ -31,13 +31,13 @@ vi.mock('../src/config.js', async (importOriginal) => {
   // The captured fs/path bindings inside this factory must use the SAME
   // shared tmp dir. We can't reach `tmpDataDir` here (hoisted above its
   // initializer), so route through env.
-  const dataDir = process.env.HAPPYCLAW_TEST_DATA_DIR!;
+  const dataDir = process.env.MINICLAW_TEST_DATA_DIR!;
   return {
     ...real,
     DATA_DIR: dataDir,
     GROUPS_DIR: path.join(dataDir, 'groups'),
     STORE_DIR: path.join(dataDir, 'db'),
-    CONTAINER_IMAGE: 'happyclaw-agent:test',
+    CONTAINER_IMAGE: 'miniclaw-agent:test',
     TIMEZONE: 'UTC',
     MAIN_GROUP_FOLDER: 'main',
   };
@@ -499,8 +499,8 @@ describe('buildVolumeMounts — AgentProfile runtime policy', () => {
     expect(envMount).toBeTruthy();
     const envFile = path.join(envMount!.hostPath, 'env');
     const envContent = fs.readFileSync(envFile, 'utf-8');
-    expect(envContent).not.toContain('HAPPYCLAW_AGENT_DISALLOWED_TOOLS=');
-    expect(envContent).not.toContain('HAPPYCLAW_AGENT_TOOL_POLICY=');
+    expect(envContent).not.toContain('MINICLAW_AGENT_DISALLOWED_TOOLS=');
+    expect(envContent).not.toContain('MINICLAW_AGENT_TOOL_POLICY=');
   });
 
   test('custom skills policy exposes only selected user skills', () => {
@@ -785,7 +785,7 @@ describe('buildVolumeMounts — AgentProfile runtime policy', () => {
     expect(envMount).toBeTruthy();
     const envFile = path.join(envMount!.hostPath, 'env');
     expect(fs.readFileSync(envFile, 'utf8')).toContain(
-      "HAPPYCLAW_AGENT_MCP_POLICY='custom'",
+      "MINICLAW_AGENT_MCP_POLICY='custom'",
     );
   });
 
@@ -914,18 +914,18 @@ describe('buildVolumeMounts — AgentProfile runtime policy', () => {
 
   test('host MCP env replaces inherited servers and clears disabled policy', () => {
     const env = {
-      HAPPYCLAW_USER_MCP_SERVERS_JSON: JSON.stringify({ stale: {} }),
+      MINICLAW_USER_MCP_SERVERS_JSON: JSON.stringify({ stale: {} }),
       KEEP_ME: 'yes',
     };
 
     replaceHostMcpServersEnv(env, { github: { command: 'github-mcp' } });
-    expect(JSON.parse(env.HAPPYCLAW_USER_MCP_SERVERS_JSON)).toEqual({
+    expect(JSON.parse(env.MINICLAW_USER_MCP_SERVERS_JSON)).toEqual({
       github: { command: 'github-mcp' },
     });
     expect(env.KEEP_ME).toBe('yes');
 
     replaceHostMcpServersEnv(env, {});
-    expect(env.HAPPYCLAW_USER_MCP_SERVERS_JSON).toBeUndefined();
+    expect(env.MINICLAW_USER_MCP_SERVERS_JSON).toBeUndefined();
     expect(env.KEEP_ME).toBe('yes');
   });
 

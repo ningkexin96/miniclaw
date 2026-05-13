@@ -47,9 +47,7 @@ export const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const CONTAINER_IMAGE = envWithLegacyAlias(
   'MINICLAW_CONTAINER_IMAGE',
   'CONTAINER_IMAGE',
-  // The published image name is a deployment compatibility surface. Keep the
-  // existing registry default until a Miniclaw image is published.
-  'riba2534/happyclaw-agent:latest',
+  'helsome/miniclaw-agent:latest',
 );
 // Timezone for scheduled tasks (cron expressions, etc.)
 // Uses TZ env var with Asia/Shanghai fallback
@@ -67,8 +65,8 @@ export const WEB_PORT = parseInt(process.env.WEB_PORT || '3000', 10);
 // Determined per-request via isSecureRequest(), not at startup
 export const SESSION_COOKIE_NAME_SECURE = '__Host-miniclaw_session';
 export const SESSION_COOKIE_NAME_PLAIN = 'miniclaw_session';
-export const LEGACY_SESSION_COOKIE_NAME_SECURE = '__Host-happyclaw_session';
-export const LEGACY_SESSION_COOKIE_NAME_PLAIN = 'happyclaw_session';
+export const LEGACY_SESSION_COOKIE_NAME_SECURE = SESSION_COOKIE_NAME_SECURE;
+export const LEGACY_SESSION_COOKIE_NAME_PLAIN = SESSION_COOKIE_NAME_PLAIN;
 const SESSION_SECRET_FILE = path.join(DATA_DIR, 'config', 'session-secret.key');
 
 function getOrCreateSessionSecret(): string {

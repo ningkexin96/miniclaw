@@ -53,7 +53,7 @@ describe('Run Now idempotency key lifecycle', () => {
       getPendingTaskRunKey('user-1', 'task-1', 24 * 60 * 60 * 1000),
     ).toContain('22222222');
     const repaired = JSON.parse(
-      values.get('happyclaw:task-run-idempotency:user-1')!,
+      values.get('miniclaw:task-run-idempotency:user-1')!,
     );
     expect(repaired['task-1']).toEqual({
       key: '22222222-2222-4222-8222-222222222222',
@@ -67,9 +67,9 @@ describe('Run Now idempotency key lifecycle', () => {
     ['string', '"invalid"'],
   ])('repairs a persisted %s root without throwing', (_label, raw) => {
     const values = new Map<string, string>([
-      ['happyclaw:task-run-idempotency:user-1', raw],
+      ['miniclaw:task-run-idempotency:user-1', raw],
       [
-        'happyclaw:task-run-idempotency:user-2',
+        'miniclaw:task-run-idempotency:user-2',
         JSON.stringify({
           untouched: { key: 'other-user-key', createdAt: 900 },
         }),
@@ -87,7 +87,7 @@ describe('Run Now idempotency key lifecycle', () => {
       '11111111-1111-4111-8111-111111111111',
     );
     expect(
-      JSON.parse(values.get('happyclaw:task-run-idempotency:user-1')!),
+      JSON.parse(values.get('miniclaw:task-run-idempotency:user-1')!),
     ).toEqual({
       'task-1': {
         key: '11111111-1111-4111-8111-111111111111',
@@ -95,14 +95,14 @@ describe('Run Now idempotency key lifecycle', () => {
       },
     });
     expect(
-      JSON.parse(values.get('happyclaw:task-run-idempotency:user-2')!),
+      JSON.parse(values.get('miniclaw:task-run-idempotency:user-2')!),
     ).toEqual({
       untouched: { key: 'other-user-key', createdAt: 900 },
     });
   });
 
   test('keeps valid entries while removing malformed and expired siblings', () => {
-    const storage = 'happyclaw:task-run-idempotency:user-1';
+    const storage = 'miniclaw:task-run-idempotency:user-1';
     const values = new Map<string, string>([
       [
         storage,
@@ -129,7 +129,7 @@ describe('Run Now idempotency key lifecycle', () => {
   });
 
   test('rejects a timestamp in the future after a local clock correction', () => {
-    const storage = 'happyclaw:task-run-idempotency:user-1';
+    const storage = 'miniclaw:task-run-idempotency:user-1';
     const values = new Map<string, string>([
       [
         storage,

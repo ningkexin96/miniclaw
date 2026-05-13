@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+/electron/release/
 
 # Runtime data — databases, encrypted configs, sessions, IPC, env files, agent workspaces
 # All personal data, auto-created at startup, must not be committed.
@@ -16,7 +17,7 @@ dist/
 # Backup archives from `make backup` — contain the session-secret key, the
 # Claude provider encryption key and the full user SQLite database, i.e. the
 # same secrets as /data/. Written to BACKUP_DIR (repo root by default).
-happyclaw-backup-*.tar.gz
+miniclaw-backup-*.tar.gz
 
 # Environment variables (may contain API keys and secrets)
 .env

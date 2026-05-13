@@ -15,10 +15,10 @@ import path from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const SHARED_TMP =
-  process.env.HAPPYCLAW_TEST_DATA_DIR ??
+  process.env.MINICLAW_TEST_DATA_DIR ??
   (() => {
-    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-routes-plugins-'));
-    process.env.HAPPYCLAW_TEST_DATA_DIR = d;
+    const d = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-routes-plugins-'));
+    process.env.MINICLAW_TEST_DATA_DIR = d;
     return d;
   })();
 
@@ -26,7 +26,7 @@ let tmpDataDir = SHARED_TMP;
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
-  const dataDir = process.env.HAPPYCLAW_TEST_DATA_DIR!;
+  const dataDir = process.env.MINICLAW_TEST_DATA_DIR!;
   return {
     ...real,
     DATA_DIR: dataDir,
@@ -46,13 +46,13 @@ vi.mock('../src/logger.js', () => ({
 
 // Authenticated as a fixed test user. The route's authMiddleware lookup is
 // stubbed so we don't need to seed sessions / cookies in db. Role can be
-// flipped per-test via HAPPYCLAW_TEST_USER_ROLE env var.
+// flipped per-test via MINICLAW_TEST_USER_ROLE env var.
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
     c.set('user', {
-      id: process.env.HAPPYCLAW_TEST_USER_ID ?? 'alice',
+      id: process.env.MINICLAW_TEST_USER_ID ?? 'alice',
       username: 'alice',
-      role: process.env.HAPPYCLAW_TEST_USER_ROLE ?? 'member',
+      role: process.env.MINICLAW_TEST_USER_ROLE ?? 'member',
       permissions: [],
     });
     return next();
@@ -68,7 +68,7 @@ const { writeCatalogIndex, getCatalogSnapshotDir } = catalog;
 const { writeUserPluginsV2 } = utils;
 
 const USER = 'alice';
-process.env.HAPPYCLAW_TEST_USER_ID = USER;
+process.env.MINICLAW_TEST_USER_ID = USER;
 
 function seedCatalogSnapshot(opts: {
   marketplace: string;
@@ -128,7 +128,7 @@ function seedCatalogSnapshot(opts: {
 }
 
 beforeEach(() => {
-  delete process.env.HAPPYCLAW_TEST_USER_ROLE;
+  delete process.env.MINICLAW_TEST_USER_ROLE;
   if (fs.existsSync(tmpDataDir)) {
     for (const entry of fs.readdirSync(tmpDataDir)) {
       fs.rmSync(path.join(tmpDataDir, entry), { recursive: true, force: true });
@@ -139,7 +139,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  delete process.env.HAPPYCLAW_TEST_USER_ROLE;
+  delete process.env.MINICLAW_TEST_USER_ROLE;
   if (fs.existsSync(tmpDataDir)) {
     for (const entry of fs.readdirSync(tmpDataDir)) {
       fs.rmSync(path.join(tmpDataDir, entry), { recursive: true, force: true });
@@ -304,12 +304,12 @@ describe('GET /api/plugins', () => {
     });
 
     // member (default)
-    process.env.HAPPYCLAW_TEST_USER_ROLE = 'member';
+    process.env.MINICLAW_TEST_USER_ROLE = 'member';
     const { body: memberBody } = await getRoot();
     expect(memberBody.marketplaces[0].hostSourcePath).toBeUndefined();
 
     // admin
-    process.env.HAPPYCLAW_TEST_USER_ROLE = 'admin';
+    process.env.MINICLAW_TEST_USER_ROLE = 'admin';
     const { body: adminBody } = await getRoot();
     expect(adminBody.marketplaces[0].hostSourcePath).toBe('/host/secret/path');
   });

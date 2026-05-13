@@ -28,7 +28,7 @@ describe('legacy owner provenance migration', () => {
       name: 'Historical direct chat',
       folder: 'new-user-home',
       added_at: new Date().toISOString(),
-      created_by: 'new-happyclaw-user',
+      created_by: 'new-miniclaw-user',
       owner_im_id: 'old-external-owner',
     });
     db.closeDatabase();

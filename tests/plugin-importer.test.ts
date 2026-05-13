@@ -91,8 +91,8 @@ function seedKnownMarketplacesRaw(raw: string): void {
 }
 
 beforeEach(() => {
-  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-imp-data-'));
-  tmpHostDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-imp-host-'));
+  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-imp-data-'));
+  tmpHostDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-imp-host-'));
 });
 
 afterEach(() => {

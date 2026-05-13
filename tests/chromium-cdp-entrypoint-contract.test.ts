@@ -18,18 +18,18 @@ const containerRunner = fs.readFileSync(
 
 describe('managed Chromium CDP contract', () => {
   test('defaults Chromium and agent-browser to container-local port 9222', () => {
-    expect(dockerfile).toContain('ENV HAPPYCLAW_CHROMIUM_CDP_HOST=127.0.0.1');
-    expect(dockerfile).toContain('ENV HAPPYCLAW_CHROMIUM_CDP_PORT=9222');
+    expect(dockerfile).toContain('ENV MINICLAW_CHROMIUM_CDP_HOST=127.0.0.1');
+    expect(dockerfile).toContain('ENV MINICLAW_CHROMIUM_CDP_PORT=9222');
     expect(dockerfile).toContain('ENV AGENT_BROWSER_CDP=9222');
 
     expect(entrypoint).toContain(
-      '--remote-debugging-address="$HAPPYCLAW_CHROMIUM_CDP_HOST"',
+      '--remote-debugging-address="$MINICLAW_CHROMIUM_CDP_HOST"',
     );
     expect(entrypoint).toContain(
-      '--remote-debugging-port="$HAPPYCLAW_CHROMIUM_CDP_PORT"',
+      '--remote-debugging-port="$MINICLAW_CHROMIUM_CDP_PORT"',
     );
     expect(entrypoint).toContain(
-      'export AGENT_BROWSER_CDP="$HAPPYCLAW_CHROMIUM_CDP_PORT"',
+      'export AGENT_BROWSER_CDP="$MINICLAW_CHROMIUM_CDP_PORT"',
     );
   });
 

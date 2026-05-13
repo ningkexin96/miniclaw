@@ -10,7 +10,7 @@
 | 宿主集成           | Session Skill 对账、Container mounts、API preview          | ghost Skill、disabled collision、Plugin MCP  | 隔离 ghost；预览与实际 manifest 一致            |
 | SDK/CLI 集成       | 项目锁定版本的 Claude Agent SDK 和 Claude CLI              | main → Task Subagent → main                  | 子请求只收到自有 prompt、短运行契约与显式 Skill |
 | 前端契约/构建      | Agent 页面、Effective Context                              | 点击“新建”、选择工作区                       | 创建入口在右侧主区；真实上下文与总预算可见      |
-| 真实 Provider 冒烟 | 当前 HappyClaw 已配置 Provider                             | 固定标记问答                                 | 模型完成请求且逐字返回固定标记                  |
+| 真实 Provider 冒烟 | 当前 Miniclaw 已配置 Provider                             | 固定标记问答                                 | 模型完成请求且逐字返回固定标记                  |
 
 ## 可复现命令
 
@@ -57,7 +57,7 @@ npm run test:real-model
 
 - main prompt 带唯一 main marker，并调用 Task。
 - Task AgentDefinition 带唯一 child marker、`skills: ['qa-child-skill']`。
-- 期望：子请求包含 child marker、HappyClaw delegated-task contract 与 Skill 内容；不包含 main marker；子 Agent 不获得 Task 工具。
+- 期望：子请求包含 child marker、Miniclaw delegated-task contract 与 Skill 内容；不包含 main marker；子 Agent 不获得 Task 工具。
 
 ### 4. Agent 新建界面
 
@@ -75,7 +75,7 @@ npm run test:real-model
 请求要求模型只回复：
 
 ```text
-HAPPYCLAW_REAL_SMOKE_OK_20260721
+MINICLAW_REAL_SMOKE_OK_20260721
 ```
 
 2026-07-21 已执行两次：两次请求都完成并逐字匹配，回复长度均为 32，耗时分别约 9.1 秒和 7.5 秒。执行过程中没有打印 Provider 凭据、Endpoint 或模型值。

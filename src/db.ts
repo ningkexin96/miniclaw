@@ -86,13 +86,13 @@ import {
   bindWorkspaceMemoryDatabase,
   createWorkspaceMemorySchema,
   deleteWorkspaceMemoryData,
-  enforceHappyClawOwnerAddressCanonicalInvariant,
+  enforceMiniclawOwnerAddressCanonicalInvariant,
   resetWorkspaceMemoryData,
 } from './memory-store.js';
 import {
   bindOwnerProfileDatabase,
   createOwnerProfileSchema,
-  HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY,
+  MINICLAW_OWNER_INTRODUCTION_FLOW_KEY,
   reconcileLegacyOwnerProfileMemory,
 } from './owner-profile-store.js';
 import { splitLegacyEmbeddedReferenceContent } from './message-prompt.js';
@@ -383,7 +383,7 @@ function sqliteStringLiteral(value: string): string {
  * or data-reconciliation write; a backup failure aborts startup.
  */
 function createPreMigrationBackup(dbPath: string, schemaVersion: number): void {
-  const configuredDir = process.env.HAPPYCLAW_MIGRATION_BACKUP_DIR;
+  const configuredDir = process.env.MINICLAW_MIGRATION_BACKUP_DIR;
   const backupDir = configuredDir
     ? path.resolve(configuredDir)
     : path.join(path.dirname(dbPath), 'migration-backups');
@@ -883,7 +883,7 @@ export function initDatabase(): void {
   } else {
     // Fresh and already-v66 databases need the structural invariant, but must
     // not re-run legacy sentinel inference on every normal restart.
-    enforceHappyClawOwnerAddressCanonicalInvariant();
+    enforceMiniclawOwnerAddressCanonicalInvariant();
   }
 
   // Sub-agents table for multi-agent parallel execution
@@ -8722,7 +8722,7 @@ export function commitAgentBuilderDraft(
 }
 
 const DEFAULT_AGENT_PROFILE_NAME = 'Miniclaw';
-const LEGACY_DEFAULT_AGENT_PROFILE_NAMES = ['Default Agent', 'HappyClaw'];
+const LEGACY_DEFAULT_AGENT_PROFILE_NAMES = ['Default Agent'];
 
 export function getOrCreateDefaultAgentProfile(userId: string): AgentProfile {
   const existing = db
@@ -11156,7 +11156,7 @@ export function resetWorkspaceKnowledgeForRebuild(workspaceJid: string): void {
     db.prepare(
       `DELETE FROM workspace_onboarding_states
        WHERE workspace_jid = ? AND flow_key = ?`,
-    ).run(workspaceJid, HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY);
+    ).run(workspaceJid, MINICLAW_OWNER_INTRODUCTION_FLOW_KEY);
 
     if (workspace.is_home === 1) {
       const at = new Date().toISOString();
@@ -11166,7 +11166,7 @@ export function resetWorkspaceKnowledgeForRebuild(workspaceJid: string): void {
           lease_expires_at, first_wake_at, completed_at, skipped_at,
           created_at, updated_at
         ) VALUES (?, ?, 'pending', 0, NULL, 0, NULL, NULL, NULL, NULL, ?, ?)`,
-      ).run(workspaceJid, HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY, at, at);
+      ).run(workspaceJid, MINICLAW_OWNER_INTRODUCTION_FLOW_KEY, at, at);
     }
   })();
 }

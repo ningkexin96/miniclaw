@@ -11,7 +11,7 @@ type PiToolDefinition = ToolDefinition<any>;
 
 function toPiSchema(tool: McpToolDefinition<any>): TSchema {
   try {
-    // HappyClaw's existing MCP definitions are Zod raw shapes. Zod v4 can
+    // Miniclaw's existing MCP definitions are Zod raw shapes. Zod v4 can
     // export a standards-compatible schema; Type.Unsafe keeps that schema
     // intact while satisfying Pi's TypeBox-facing contract.
     const schema = z.toJSONSchema(z.object(tool.inputSchema as any));

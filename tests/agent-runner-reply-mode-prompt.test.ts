@@ -40,7 +40,7 @@ describe('Agent Runner reply-mode prompt contract', () => {
 
     expect(assistant).toContain('automatically publishes');
     expect(proactive).toContain(
-      '`mcp__happyclaw__send_message` is the only way',
+      '`mcp__miniclaw__send_message` is the only way',
     );
     // The tool descriptions must gate on the same three conditions as the
     // prompt selector in the runner, including `currentTaskId`: a

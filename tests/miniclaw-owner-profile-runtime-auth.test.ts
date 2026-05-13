@@ -18,7 +18,7 @@ const ownerWebInput: AgentBuilderPersistedInput = {
   task_id: null,
 };
 
-describe('HappyClaw Owner Profile exact active-turn authorization', () => {
+describe('Miniclaw Owner Profile exact active-turn authorization', () => {
   test('a queued future owner turn cannot authorize the current non-owner call', () => {
     const registry = new AgentBuilderTurnRegistry();
     registry.startBatch('home', [
@@ -229,7 +229,7 @@ describe('HappyClaw Owner Profile exact active-turn authorization', () => {
   });
 });
 
-describe('HappyClaw Owner Profile actual sender identity', () => {
+describe('Miniclaw Owner Profile actual sender identity', () => {
   test('accepts only a canonical sender with strong IM owner provenance', () => {
     const sourceJid =
       'feishu:shared-home#account:bot-a#thread:thread-1#root:root-1';
@@ -277,7 +277,7 @@ describe('HappyClaw Owner Profile actual sender identity', () => {
   });
 });
 
-describe('HappyClaw Owner Profile home-anchored sender identity', () => {
+describe('Miniclaw Owner Profile home-anchored sender identity', () => {
   const registered = (jid: string) =>
     jid.startsWith('feishu:') ? { created_by: 'owner-1' } : undefined;
   const homeFeishuOwner = (provider: string) =>
@@ -365,7 +365,7 @@ describe('HappyClaw Owner Profile home-anchored sender identity', () => {
   });
 });
 
-describe('HappyClaw Owner Profile runtime isolation', () => {
+describe('Miniclaw Owner Profile runtime isolation', () => {
   const base = {
     isScheduledTask: false,
     isolatedTaskId: null,
@@ -376,7 +376,7 @@ describe('HappyClaw Owner Profile runtime isolation', () => {
     sourceProfileIsDefault: true,
   } as const;
 
-  test('allows the default HappyClaw main and same-workspace conversation sessions', () => {
+  test('allows the default Miniclaw main and same-workspace conversation sessions', () => {
     expect(getAgentBuilderRuntimeRejection(base)).toBeNull();
     expect(
       getAgentBuilderRuntimeRejection({

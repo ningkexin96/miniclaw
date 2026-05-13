@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-export const HAPPYCLAW_SUBAGENT_RUNTIME_CONTRACT = `## HappyClaw delegated-task contract
+export const MINICLAW_SUBAGENT_RUNTIME_CONTRACT = `## Miniclaw delegated-task contract
 
 You are executing a task delegated by a parent agent. Return the requested findings or work product to that parent agent; do not act as though your text is the final user-facing reply. Stay within the delegated scope. Do not independently operate Miniclaw memory or Agent Builder unless the delegated task explicitly requires it.`;
 
@@ -21,7 +21,7 @@ type SdkOptionsWithEnv = {
 
 function contractHash(): string {
   return createHash('sha256')
-    .update(HAPPYCLAW_SUBAGENT_RUNTIME_CONTRACT, 'utf8')
+    .update(MINICLAW_SUBAGENT_RUNTIME_CONTRACT, 'utf8')
     .digest('hex');
 }
 
@@ -30,7 +30,7 @@ function contractHash(): string {
  * The SDK serializes appendSubagentSystemPrompt during its initialize control
  * request, while this CLI version gates consumption behind the environment flag.
  */
-export function withHappyClawSubagentContract<
+export function withMiniclawSubagentContract<
   T extends Record<string, unknown>,
 >(
   options: T,
@@ -40,7 +40,7 @@ export function withHappyClawSubagentContract<
   audit: SubagentRuntimeContractAudit;
 } {
   const enabled =
-    process.env.HAPPYCLAW_DISABLE_SUBAGENT_RUNTIME_CONTRACT !== 'true';
+    process.env.MINICLAW_DISABLE_SUBAGENT_RUNTIME_CONTRACT !== 'true';
   const existingEnv = (options as T & SdkOptionsWithEnv).env;
   const hash = contractHash();
   const audit: SubagentRuntimeContractAudit = {
@@ -65,7 +65,7 @@ export function withHappyClawSubagentContract<
         ...existingEnv,
         CLAUDE_CODE_ENABLE_APPEND_SUBAGENT_PROMPT: '1',
       },
-      appendSubagentSystemPrompt: HAPPYCLAW_SUBAGENT_RUNTIME_CONTRACT,
+      appendSubagentSystemPrompt: MINICLAW_SUBAGENT_RUNTIME_CONTRACT,
     },
     audit,
   };

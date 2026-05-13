@@ -25,7 +25,7 @@ The Pi path is composed of:
   skills, extensions, and `AgentSession` construction.
 - `PiRuntimeSession`: Pi event/session methods mapped to runtime-neutral events.
 - `adaptClaudeMcpToolsToPi`: existing capability handlers exposed as Pi custom
-  tools under the stable `mcp__happyclaw__*` names.
+  tools under the stable `mcp__miniclaw__*` names.
 - `PiSubAgentAdapter`: the documented `pi-subagents` spawn/stop RPC and
   lifecycle event bridge. Result lookup and steering remain explicit extension
   tool operations because the installed package does not publish those RPCs.
@@ -40,14 +40,14 @@ consume the existing framed output and delivery receipts.
 | Existing capability  | Pi implementation                                                                                          | Status                                        |
 | -------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 | Prompt and streaming | `AgentSession.prompt()` + runtime event adapter                                                            | Implemented                                   |
-| Tool calling         | Pi custom tools; HappyClaw handlers are reused                                                             | Implemented                                   |
+| Tool calling         | Pi custom tools; Miniclaw handlers are reused                                                             | Implemented                                   |
 | Session persistence  | Pi `SessionManager` in the per-group Pi session directory                                                  | Implemented                                   |
 | Resume               | Open the Pi JSONL session by session id                                                                    | Implemented for Pi-created sessions           |
 | Abort                | `AgentSession.abort()` and IPC interrupt sentinel                                                          | Implemented                                   |
 | Steer / follow-up    | `AgentSession.followUp()` for queued IPC turns                                                             | Implemented in Pi bridge                      |
 | Compaction           | Pi native session compaction; product toggle maps to `SettingsManager.setCompactionEnabled` via `autoCompactEnabled`; legacy percentage/window knobs advisory | Implemented; live-model validation pending |
 | Skills               | Pi `DefaultResourceLoader` skill paths                                                                     | Implemented                                   |
-| Workspace memory     | Existing HappyClaw MCP handlers, adapted as Pi tools                                                       | Implemented in Pi path                        |
+| Workspace memory     | Existing Miniclaw MCP handlers, adapted as Pi tools                                                       | Implemented in Pi path                        |
 | MCP/capabilities     | In-process capability handlers, namespaced as Pi tools                                                     | Implemented                                   |
 | Subagents            | `@tintinweb/pi-subagents` extension plus adapter                                                           | Implemented; result/steer are extension tools |
 | Background subagents | `run_in_background` is passed through the extension tool contract                                          | Validation pending                            |
@@ -63,7 +63,7 @@ The runner pins:
 - `typebox@1.3.7`
 
 Pi core intentionally leaves MCP and subagent behavior to extensions or
-custom-tool adapters. The migration therefore keeps HappyClaw capability
+custom-tool adapters. The migration therefore keeps Miniclaw capability
 authorization in the existing context and handler layer instead of creating a
 second unrestricted MCP server.
 
@@ -71,9 +71,9 @@ second unrestricted MCP server.
 
 - `AGENT_RUNTIME` defaults to `pi`. A Claude selector is rejected by the
   production Pi-only entry point rather than silently changing engines.
-- `HAPPYCLAW_*` environment variables and stored session/database identifiers
+- `MINICLAW_*` environment variables and stored session/database identifiers
   remain readable while the branding migration introduces Miniclaw defaults.
-- Claude MCP tool names are preserved as `mcp__happyclaw__<name>` in Pi so
+- Claude MCP tool names are preserved as `mcp__miniclaw__<name>` in Pi so
   prompt and capability policy references remain stable.
 - Unsupported Pi mappings fail explicitly or remain visible in this matrix;
   they are not silently routed to Claude.
@@ -82,21 +82,21 @@ second unrestricted MCP server.
 
 ## Rename policy
 
-The product-facing name is moving from HappyClaw to Miniclaw. Existing
+The product-facing name is moving from Miniclaw to Miniclaw. Existing
 environment variables, database keys, workspace paths, cookie names, and
 deployment identifiers are compatibility surfaces and must not be changed
 without a migration alias. New Miniclaw aliases should take precedence, with
-the old HappyClaw values accepted as fallbacks.
+the old Miniclaw values accepted as fallbacks.
 
 Rename status: package metadata, README, CLAUDE.md, web title, settings
 sections, channel onboarding texts, login/about pages, CLI/status output,
 runtime identity and bootstrap prompts, MCP tool descriptions, subagent
 contract text, and the built-in default Agent profile name (new installs and
 lazy legacy migration) now use Miniclaw. Kept as compatibility surfaces:
-`HAPPYCLAW_*` env vars, `mcp__happyclaw__*` tool names, `happyclaw_owner_profile`
-capability, localStorage/IndexedDB keys, `__HAPPYCLAW_HASH_ROUTER__`, PWA
+`MINICLAW_*` env vars, `mcp__miniclaw__*` tool names, `miniclaw_owner_profile`
+capability, localStorage/IndexedDB keys, `__MINICLAW_HASH_ROUTER__`, PWA
 legacy cleanup, cookie aliases, the published Docker image name, and the
-`happyclaw-backup-*` archive naming.
+`miniclaw-backup-*` archive naming.
 
 ## Verification ledger
 
@@ -134,7 +134,7 @@ Migration slices verified:
   (construct, subscribe, abort, dispose);
 - Pi subagent extension session construction smoke test passes;
 - focused runtime migration and subagent contract tests pass;
-- full branding sweep: zero user-visible `HappyClaw` strings remain in
+- full branding sweep: zero user-visible `Miniclaw` strings remain in
   `web/src`, `src`, runner prompts, or scripts; only documented compatibility
   surfaces keep the legacy name.
 
@@ -158,7 +158,7 @@ and unit/integration coverage for each are in place.
   adapter maps it to `SettingsManager.setCompactionEnabled`; the percentage
   inputs no longer steer the trigger point.
 - The built-in main Agent is renamed to Miniclaw; existing databases keep
-  stored `HappyClaw`/`Default Agent` default-profile names until the next
+  stored `Miniclaw`/`Default Agent` default-profile names until the next
   read, which lazily migrates them (one-time version bump and identity-hash
   recompute, so the main agent's sessions restart once).
 - `src/index.ts` (host entry) and `container/agent-runner/src/index.ts` plus

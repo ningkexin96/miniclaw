@@ -1,6 +1,6 @@
 import type { Message } from '../stores/chat';
 
-const DB_NAME = 'happyclaw-message-snapshots';
+const DB_NAME = 'miniclaw-message-snapshots';
 const DB_VERSION = 1;
 const AGENT_MESSAGES_STORE = 'agentMessages';
 const MAX_MESSAGES_PER_AGENT = 100;

@@ -173,5 +173,5 @@ export function syntheticChannelProviderAck(input: {
     .update(`${input.turnRunId}:${input.ordinal}:${input.payloadHash}`)
     .digest('hex')
     .slice(0, 32);
-  return `happyclaw-synthetic:${digest}`;
+  return `miniclaw-synthetic:${digest}`;
 }

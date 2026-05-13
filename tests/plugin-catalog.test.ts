@@ -26,7 +26,7 @@ const {
 } = catalog;
 
 beforeEach(() => {
-  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-cat-'));
+  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-cat-'));
 });
 
 afterEach(() => {

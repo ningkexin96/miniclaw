@@ -5,31 +5,31 @@ import path from 'node:path';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const TEST_ROOT =
-  process.env.HAPPYCLAW_HOST_MOUNT_BROWSE_TEST_DIR ??
+  process.env.MINICLAW_HOST_MOUNT_BROWSE_TEST_DIR ??
   (() => {
     const dir = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'happyclaw-host-mount-browse-'),
+      path.join(os.tmpdir(), 'miniclaw-host-mount-browse-'),
     );
-    process.env.HAPPYCLAW_HOST_MOUNT_BROWSE_TEST_DIR = dir;
+    process.env.MINICLAW_HOST_MOUNT_BROWSE_TEST_DIR = dir;
     return dir;
   })();
 const allowlistPath = path.join(TEST_ROOT, 'mount-allowlist.json');
 const allowedRoot = path.join(TEST_ROOT, 'allowed');
 const outsideRoot = path.join(TEST_ROOT, 'outside');
 const homeLikeRoot = path.join(TEST_ROOT, 'home-like');
-const protectedDataDir = path.join(homeLikeRoot, 'happyclaw-data');
+const protectedDataDir = path.join(homeLikeRoot, 'miniclaw-data');
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
   return {
     ...real,
     DATA_DIR: path.join(
-      process.env.HAPPYCLAW_HOST_MOUNT_BROWSE_TEST_DIR!,
+      process.env.MINICLAW_HOST_MOUNT_BROWSE_TEST_DIR!,
       'home-like',
-      'happyclaw-data',
+      'miniclaw-data',
     ),
     MOUNT_ALLOWLIST_PATH: path.join(
-      process.env.HAPPYCLAW_HOST_MOUNT_BROWSE_TEST_DIR!,
+      process.env.MINICLAW_HOST_MOUNT_BROWSE_TEST_DIR!,
       'mount-allowlist.json',
     ),
   };
@@ -49,7 +49,7 @@ vi.mock('../src/middleware/auth.ts', () => ({
     c.set('user', {
       id: 'browse-user',
       username: 'browse-user',
-      role: process.env.HAPPYCLAW_TEST_USER_ROLE ?? 'admin',
+      role: process.env.MINICLAW_TEST_USER_ROLE ?? 'admin',
       status: 'active',
       permissions: [],
     });
@@ -85,7 +85,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  process.env.HAPPYCLAW_TEST_USER_ROLE = 'admin';
+  process.env.MINICLAW_TEST_USER_ROLE = 'admin';
   fs.rmSync(allowlistPath, { force: true });
 });
 
@@ -98,7 +98,7 @@ describe.sequential('mount-purpose directory browsing', () => {
         description: 'Allowed',
       },
     ]);
-    process.env.HAPPYCLAW_TEST_USER_ROLE = 'member';
+    process.env.MINICLAW_TEST_USER_ROLE = 'member';
     const routes = await loadBrowseRoutes();
 
     const response = await routes.request('/directories?purpose=mount');

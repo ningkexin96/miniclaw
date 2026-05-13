@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Hono } from 'hono';
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-mcp-secrets-'));
+const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-mcp-secrets-'));
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = await importOriginal<typeof import('../src/config.js')>();

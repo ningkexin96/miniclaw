@@ -13,7 +13,7 @@ import {
 const roots: string[] = [];
 
 function tempRoot(): string {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-mcp-context-'));
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-mcp-context-'));
   roots.push(root);
   return root;
 }
@@ -98,7 +98,7 @@ describe('Claude context MCP layering', () => {
     ).toEqual({ project: { command: 'project' } });
   });
 
-  test('HappyClaw-managed MCP is additive and wins deterministic name collisions', () => {
+  test('Miniclaw-managed MCP is additive and wins deterministic name collisions', () => {
     expect(
       mergeMcpServerLayers(
         {

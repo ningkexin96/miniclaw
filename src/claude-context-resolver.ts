@@ -438,7 +438,7 @@ export function buildClaudeContextPlan(
       selectedSkillIds: effectiveSkills.selected.map((skill) => skill.id),
       sources: skillAuditSources,
     },
-    happyclawPrompt: { totalBytes: 0, files: [] },
+    miniclawPrompt: { totalBytes: 0, files: [] },
     warnings,
   };
 

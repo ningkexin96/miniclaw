@@ -4,7 +4,7 @@ import path from 'path';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Isolated temp DATA_DIR so the suite never touches the real database.
-const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-provider-'));
+const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-provider-'));
 
 vi.mock('../src/config.js', async () => {
   const actual =

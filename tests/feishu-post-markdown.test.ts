@@ -33,7 +33,7 @@ describe('Feishu post Markdown node splitting', () => {
   });
 
   test('does not split Unicode code points or ordinary Markdown links', () => {
-    const link = '[飞书文档](https://example.com/docs?id=123&source=happyclaw)';
+    const link = '[飞书文档](https://example.com/docs?id=123&source=miniclaw)';
     const chunks = splitFeishuPostMarkdown(
       `${'总结🙂'.repeat(500)}\n${link}\n${'下一步🚀'.repeat(500)}`,
       900,

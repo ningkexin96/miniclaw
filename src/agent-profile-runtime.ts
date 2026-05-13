@@ -18,14 +18,14 @@ import { logger } from './logger.js';
  * editable AgentProfile field. Bump this version whenever the protected
  * identity contract changes so existing SDK sessions restart under it.
  */
-export const HAPPYCLAW_PLATFORM_IDENTITY_VERSION = 1;
+export const MINICLAW_PLATFORM_IDENTITY_VERSION = 1;
 
-export function bindHappyClawPlatformIdentityHash(
+export function bindMiniclawPlatformIdentityHash(
   identityHash: string,
 ): string {
   return createHash('sha256')
     .update(
-      `happyclaw-platform-identity:v${HAPPYCLAW_PLATFORM_IDENTITY_VERSION}\0${identityHash}`,
+      `miniclaw-platform-identity:v${MINICLAW_PLATFORM_IDENTITY_VERSION}\0${identityHash}`,
       'utf8',
     )
     .digest('hex');
@@ -95,7 +95,7 @@ export function resolveEffectiveAgentProfile(
   return {
     ...profile,
     identity_hash: profile.is_default
-      ? bindHappyClawPlatformIdentityHash(effectiveIdentityHash)
+      ? bindMiniclawPlatformIdentityHash(effectiveIdentityHash)
       : effectiveIdentityHash,
     runtime_policy: effectiveRuntimePolicy,
   };

@@ -15,33 +15,33 @@ describe('managed host Claude memory policy', () => {
         runtimePolicy: { context: { source: 'managed' } },
         homeDir: '/Users/operator',
         externalClaudeDir: '/Volumes/config/claude',
-        projectRoot: '/Users/operator/airepo/happyclaw',
+        projectRoot: '/Users/operator/airepo/miniclaw',
       }),
     ).toEqual([
       path.join('/Users/operator/.claude', 'CLAUDE.md'),
       path.join('/Users/operator/.claude', 'rules', '**'),
       path.join('/Volumes/config/claude', 'CLAUDE.md'),
       path.join('/Volumes/config/claude', 'rules', '**'),
-      path.join('/Users/operator/airepo/happyclaw', 'CLAUDE.md'),
-      path.join('/Users/operator/airepo/happyclaw', '.claude', 'CLAUDE.md'),
-      path.join('/Users/operator/airepo/happyclaw', 'CLAUDE.local.md'),
-      path.join('/Users/operator/airepo/happyclaw', '.claude', 'rules', '**'),
+      path.join('/Users/operator/airepo/miniclaw', 'CLAUDE.md'),
+      path.join('/Users/operator/airepo/miniclaw', '.claude', 'CLAUDE.md'),
+      path.join('/Users/operator/airepo/miniclaw', 'CLAUDE.local.md'),
+      path.join('/Users/operator/airepo/miniclaw', '.claude', 'rules', '**'),
     ]);
   });
 
   test('keeps workspace-local memory while excluding only platform project memory', () => {
     const groupWorkspace =
-      '/Users/operator/airepo/happyclaw/data/groups/address-agent';
+      '/Users/operator/airepo/miniclaw/data/groups/address-agent';
     const excludes = resolveManagedHostClaudeMdExcludes({
       executionMode: 'host',
       runtimePolicy: { context: { source: 'managed' } },
       homeDir: '/Users/operator',
-      projectRoot: '/Users/operator/airepo/happyclaw',
+      projectRoot: '/Users/operator/airepo/miniclaw',
     });
 
     expect(excludes).not.toContain(path.join(groupWorkspace, 'CLAUDE.md'));
     expect(excludes).toContain(
-      path.join('/Users/operator/airepo/happyclaw', 'CLAUDE.md'),
+      path.join('/Users/operator/airepo/miniclaw', 'CLAUDE.md'),
     );
   });
 
@@ -98,18 +98,18 @@ describe('managed host Claude memory policy', () => {
       runtimePolicy: { context: { source: 'managed' } },
       homeDir: 'C:\\Users\\operator',
       externalClaudeDir: 'D:\\Claude',
-      projectRoot: 'C:\\code\\happyclaw',
+      projectRoot: 'C:\\code\\miniclaw',
     });
 
     expect(excludes).toContain('C:/Users/operator/.claude/CLAUDE.md');
     expect(excludes).toContain('D:/Claude/rules/**');
-    expect(excludes).toContain('C:/code/happyclaw/.claude/rules/**');
+    expect(excludes).toContain('C:/code/miniclaw/.claude/rules/**');
     expect(excludes.every((entry) => !entry.includes('\\'))).toBe(true);
     expect(
       findClaudeMdExcludeLeaks(
-        [{ path: 'C:\\code\\happyclaw\\.claude\\rules\\agent.md' }],
+        [{ path: 'C:\\code\\miniclaw\\.claude\\rules\\agent.md' }],
         excludes,
       ),
-    ).toEqual(['C:/code/happyclaw/.claude/rules/agent.md']);
+    ).toEqual(['C:/code/miniclaw/.claude/rules/agent.md']);
   });
 });

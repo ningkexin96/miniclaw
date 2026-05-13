@@ -38,7 +38,7 @@ vi.mock('../src/logger.js', () => ({
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
     const id =
-      process.env.HAPPYCLAW_INTERACTION_TEST_USER ?? 'interaction-owner';
+      process.env.MINICLAW_INTERACTION_TEST_USER ?? 'interaction-owner';
     c.set('user', {
       id,
       username: id,
@@ -89,7 +89,7 @@ function createUser(id: string): void {
 }
 
 function asUser(id: string): void {
-  process.env.HAPPYCLAW_INTERACTION_TEST_USER = id;
+  process.env.MINICLAW_INTERACTION_TEST_USER = id;
 }
 
 beforeAll(() => {
@@ -105,7 +105,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  delete process.env.HAPPYCLAW_INTERACTION_TEST_USER;
+  delete process.env.MINICLAW_INTERACTION_TEST_USER;
   vi.clearAllMocks();
 });
 

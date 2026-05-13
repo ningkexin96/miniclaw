@@ -36,7 +36,7 @@ function escapeAttribute(value: string): string {
  * messages but do not reliably honor a custom SDK systemPrompt. Keeping the
  * canonical system block remains important for providers that do; this small
  * compatibility anchor makes the same Agent contract explicit at the turn
- * boundary without changing the user-visible message stored by HappyClaw.
+ * boundary without changing the user-visible message stored by Miniclaw.
  */
 export function resolveAgentTurnAnchor(
   profile: AgentTurnProfile | undefined,

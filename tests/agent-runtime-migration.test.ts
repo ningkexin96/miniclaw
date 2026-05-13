@@ -32,10 +32,10 @@ describe('agent runtime migration contracts', () => {
           handler,
         } as any,
       ],
-      { namespace: 'mcp__happyclaw' },
+      { namespace: 'mcp__miniclaw' },
     );
 
-    expect(tool.name).toBe('mcp__happyclaw__send_message');
+    expect(tool.name).toBe('mcp__miniclaw__send_message');
     const result = await tool.execute(
       'tool-call-1',
       { text: 'hello' },

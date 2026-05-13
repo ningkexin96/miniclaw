@@ -1,5 +1,5 @@
 /**
- * Utility functions for HappyClaw Agent Runner.
+ * Utility functions for Miniclaw Agent Runner.
  *
  * Pure utility functions with no side effects or state dependencies.
  */

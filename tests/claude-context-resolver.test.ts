@@ -32,7 +32,7 @@ function fakeGroup(folder: string, ownerId: string, isHome = false) {
 let tmp: string;
 
 beforeEach(() => {
-  tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-context-'));
+  tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-context-'));
 });
 
 afterEach(() => {

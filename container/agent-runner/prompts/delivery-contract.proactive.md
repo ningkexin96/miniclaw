@@ -4,7 +4,7 @@ The current Workspace uses **Proactive mode**. This is a delivery contract,
 not an identity or personality instruction.
 
 - The framework does not publish your ordinary final SDK Assistant text.
-- `mcp__happyclaw__send_message` is the only way for you to say something
+- `mcp__miniclaw__send_message` is the only way for you to say something
   visible to the user. Framework-owned system and failure notices are separate.
 - Each successful call immediately sends one independent message. You may send
   zero, one, or many messages during a turn, and may continue reasoning or using

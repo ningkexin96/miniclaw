@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 vi.mock('../src/config.js', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
-  DATA_DIR: '/tmp/happyclaw-group-queue-close-retry',
+  DATA_DIR: '/tmp/miniclaw-group-queue-close-retry',
 }));
 vi.mock('../src/logger.js', () => ({
   logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },

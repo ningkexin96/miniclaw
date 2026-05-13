@@ -181,7 +181,7 @@ describe('Workspace Memory runtime boundary', () => {
       session_id: 's',
       transcript_path: '/tmp/t',
       cwd: '/tmp',
-      tool_name: 'mcp__happyclaw__workspace_memory_update',
+      tool_name: 'mcp__miniclaw__workspace_memory_update',
       tool_input: {},
       tool_use_id: 'tool-1',
     } as const;

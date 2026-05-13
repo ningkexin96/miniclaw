@@ -14,7 +14,7 @@ import {
 } from 'vitest';
 
 const tmpDir = fs.mkdtempSync(
-  path.join(os.tmpdir(), 'happyclaw-provider-runtime-apply-'),
+  path.join(os.tmpdir(), 'miniclaw-provider-runtime-apply-'),
 );
 
 vi.mock('../src/config.js', async (importOriginal) => ({

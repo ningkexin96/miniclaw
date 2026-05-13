@@ -29,9 +29,9 @@ vi.mock('../src/logger.js', () => ({
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
     c.set('user', {
-      id: process.env.HAPPYCLAW_TEST_USER_ID ?? 'routes-workspace-owner',
-      username: process.env.HAPPYCLAW_TEST_USER_ID ?? 'routes-workspace-owner',
-      role: process.env.HAPPYCLAW_TEST_USER_ROLE ?? 'member',
+      id: process.env.MINICLAW_TEST_USER_ID ?? 'routes-workspace-owner',
+      username: process.env.MINICLAW_TEST_USER_ID ?? 'routes-workspace-owner',
+      role: process.env.MINICLAW_TEST_USER_ROLE ?? 'member',
       permissions: [],
     });
     return next();
@@ -47,8 +47,8 @@ const STRANGER_ID = 'routes-workspace-stranger';
 const OTHER_OWNER_ID = 'routes-workspace-other-owner';
 
 function asUser(userId: string, role: 'admin' | 'member' = 'member'): void {
-  process.env.HAPPYCLAW_TEST_USER_ID = userId;
-  process.env.HAPPYCLAW_TEST_USER_ROLE = role;
+  process.env.MINICLAW_TEST_USER_ID = userId;
+  process.env.MINICLAW_TEST_USER_ROLE = role;
 }
 
 function createUser(id: string): void {
@@ -74,8 +74,8 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  delete process.env.HAPPYCLAW_TEST_USER_ID;
-  delete process.env.HAPPYCLAW_TEST_USER_ROLE;
+  delete process.env.MINICLAW_TEST_USER_ID;
+  delete process.env.MINICLAW_TEST_USER_ROLE;
 });
 
 afterAll(() => {

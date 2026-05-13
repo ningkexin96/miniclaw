@@ -346,7 +346,7 @@ function replaceComponents(stagedDataDir, dataDir, stageRoot, manifest) {
   }
 }
 
-// A `.happyclaw-restore-*` staging directory (holding the pre-restore
+// A `.miniclaw-restore-*` staging directory (holding the pre-restore
 // rollback copy, i.e. real user secrets/DB) only survives past a restore
 // invocation if that invocation was killed hard enough to skip the
 // `finally` cleanup below (SIGKILL, OOM kill, host crash — not a normal
@@ -369,7 +369,7 @@ function cleanupOrphanedRestoreStagingDirs(parentDir, excludeStageRoot) {
     return;
   }
   for (const entry of entries) {
-    if (!entry.isDirectory() || !entry.name.startsWith('.happyclaw-restore-'))
+    if (!entry.isDirectory() || !entry.name.startsWith('.miniclaw-restore-'))
       continue;
     const orphan = path.join(parentDir, entry.name);
     if (excludeStageRoot && orphan === excludeStageRoot) continue;
@@ -402,7 +402,7 @@ function isProcessAlive(pid) {
 // cleanupOrphanedRestoreStagingDirs (called after a successful restore)
 // cannot distinguish "a genuinely abandoned staging dir from an earlier
 // crashed run" from "another restore's staging/rollback dir that is still
-// in active use right now" — both just look like a `.happyclaw-restore-*`
+// in active use right now" — both just look like a `.miniclaw-restore-*`
 // directory that isn't the current process's own stageRoot. Whichever
 // restore finishes first would delete the other's in-flight rollback data.
 // Serialize with a PID-stamped exclusive lock file instead of trying to
@@ -415,7 +415,7 @@ function isProcessAlive(pid) {
 // made race-free. Restore is destructive; fail closed and require an operator
 // to verify no restore is running before removing a stale lock manually.
 function acquireRestoreLock(parentDir) {
-  const lockPath = path.join(parentDir, '.happyclaw-restore.lock');
+  const lockPath = path.join(parentDir, '.miniclaw-restore.lock');
   try {
     fs.writeFileSync(lockPath, String(process.pid), {
       flag: 'wx',
@@ -473,7 +473,7 @@ async function restore(archiveArg, dataDirArg, port) {
     // Staging creation itself can fail (ENOSPC, inode exhaustion, quota,
     // permissions). Keep it inside the lock's try/finally so such an early
     // failure does not strand a stale lock that blocks every later restore.
-    stageRoot = fs.mkdtempSync(path.join(parentDir, '.happyclaw-restore-'));
+    stageRoot = fs.mkdtempSync(path.join(parentDir, '.miniclaw-restore-'));
     runTar(
       [
         '-xzf',

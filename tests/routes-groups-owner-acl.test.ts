@@ -26,12 +26,12 @@ import {
 } from 'vitest';
 
 const SHARED_TMP =
-  process.env.HAPPYCLAW_TEST_DATA_DIR ??
+  process.env.MINICLAW_TEST_DATA_DIR ??
   (() => {
     const d = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'happyclaw-routes-groups-owner-'),
+      path.join(os.tmpdir(), 'miniclaw-routes-groups-owner-'),
     );
-    process.env.HAPPYCLAW_TEST_DATA_DIR = d;
+    process.env.MINICLAW_TEST_DATA_DIR = d;
     return d;
   })();
 
@@ -39,7 +39,7 @@ const tmpDataDir = SHARED_TMP;
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
-  const dataDir = process.env.HAPPYCLAW_TEST_DATA_DIR!;
+  const dataDir = process.env.MINICLAW_TEST_DATA_DIR!;
   return {
     ...real,
     DATA_DIR: dataDir,
@@ -55,9 +55,9 @@ vi.mock('../src/logger.js', () => ({
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
     c.set('user', {
-      id: process.env.HAPPYCLAW_TEST_USER_ID ?? 'alice',
+      id: process.env.MINICLAW_TEST_USER_ID ?? 'alice',
       username: 'alice',
-      role: process.env.HAPPYCLAW_TEST_USER_ROLE ?? 'member',
+      role: process.env.MINICLAW_TEST_USER_ROLE ?? 'member',
       status: 'active',
       permissions: [],
     });
@@ -88,8 +88,8 @@ const OWNER_ID = 'alice';
 const ADMIN_ID = 'zadmin';
 
 function asUser(userId: string, role: 'admin' | 'member' = 'member'): void {
-  process.env.HAPPYCLAW_TEST_USER_ID = userId;
-  process.env.HAPPYCLAW_TEST_USER_ROLE = role;
+  process.env.MINICLAW_TEST_USER_ID = userId;
+  process.env.MINICLAW_TEST_USER_ROLE = role;
 }
 
 // Persistent stub cache (see setWebDeps below) — stable across getRegisteredGroups() calls.
@@ -109,8 +109,8 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  delete process.env.HAPPYCLAW_TEST_USER_ID;
-  delete process.env.HAPPYCLAW_TEST_USER_ROLE;
+  delete process.env.MINICLAW_TEST_USER_ID;
+  delete process.env.MINICLAW_TEST_USER_ROLE;
 });
 
 describe('POST /:jid/reset-owner (admin break-glass)', () => {
@@ -1226,7 +1226,7 @@ describe('POST / workspace Agent membership publication lock', () => {
       name: 'Slow Init Target',
     });
     const sourceDir = fs.mkdtempSync(
-      path.join(os.homedir(), '.happyclaw-slow-init-source-'),
+      path.join(os.homedir(), '.miniclaw-slow-init-source-'),
     );
     fs.writeFileSync(path.join(sourceDir, 'seed.txt'), 'seed');
     let copyStarted!: () => void;

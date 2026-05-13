@@ -1483,7 +1483,7 @@ function setupWebSocket(server: any): WebSocketServer {
       socket.destroy();
       return;
     }
-    request.__happyclawSessionId = token;
+    request.__miniclawSessionId = token;
 
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit('connection', ws, request);
@@ -1491,7 +1491,7 @@ function setupWebSocket(server: any): WebSocketServer {
   });
 
   wss.on('connection', (ws, request: any) => {
-    const sessionId = request?.__happyclawSessionId as string | undefined;
+    const sessionId = request?.__miniclawSessionId as string | undefined;
     logger.info('WebSocket client connected');
     const connSession = sessionId
       ? getCachedSessionWithUser(sessionId)

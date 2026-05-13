@@ -135,7 +135,7 @@ export class PiRuntimeAdapter implements AgentRuntime {
       ? [
           ...new Set(
             allowedNames.flatMap((name) => {
-              if (name === 'mcp__happyclaw__*') {
+              if (name === 'mcp__miniclaw__*') {
                 return customTools.map((tool) => tool.name);
               }
               return [toolAliases[name] || name];

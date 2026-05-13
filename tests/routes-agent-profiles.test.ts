@@ -793,7 +793,7 @@ describe('/api/agent-profiles routes', () => {
     });
   });
 
-  test('allows admins to create host agents and patch the default HappyClaw profile', async () => {
+  test('allows admins to create host agents and patch the default Miniclaw profile', async () => {
     const createRes = await routes.request('/', {
       method: 'POST',
       headers: {

@@ -104,7 +104,7 @@ function enable(opts: {
 }
 
 beforeEach(() => {
-  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-expand-'));
+  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-expand-'));
   _resetCommandIndexCacheForTests();
 });
 
@@ -465,7 +465,7 @@ describe('expandPluginSlashCommandIfNeeded — inline path', () => {
     const execHost = vi.fn();
 
     const r = await expandPluginSlashCommandIfNeeded(
-      ctxDocker('alice', 'happyclaw-c-abc'),
+      ctxDocker('alice', 'miniclaw-c-abc'),
       '/inspect --base "main branch"',
       { execHost: execHost as any, execDocker: execDocker as any },
     );
@@ -474,7 +474,7 @@ describe('expandPluginSlashCommandIfNeeded — inline path', () => {
     expect(execDocker).toHaveBeenCalledTimes(1);
 
     const [container, rawCmd, posArgs, env] = execDocker.mock.calls[0];
-    expect(container).toBe('happyclaw-c-abc');
+    expect(container).toBe('miniclaw-c-abc');
     expect(rawCmd).toBe('node ${CLAUDE_PLUGIN_ROOT}/script.mjs "$ARGUMENTS"');
     // posArgs are whitespace-split — quotes preserved literally.
     expect(posArgs).toEqual(['--base', '"main', 'branch"']);

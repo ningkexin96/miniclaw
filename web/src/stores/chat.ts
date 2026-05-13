@@ -3560,7 +3560,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
         let orderedAgents = visibleAgents;
         try {
           const savedOrder = localStorage.getItem(
-            `happyclaw-agent-order-${jid}`,
+            `miniclaw-agent-order-${jid}`,
           );
           if (savedOrder) {
             const ids: string[] = JSON.parse(savedOrder);
@@ -3665,7 +3665,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     // Persist to localStorage
     try {
       localStorage.setItem(
-        `happyclaw-agent-order-${jid}`,
+        `miniclaw-agent-order-${jid}`,
         JSON.stringify(orderedIds),
       );
     } catch {

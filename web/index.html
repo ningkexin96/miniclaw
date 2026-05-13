@@ -51,7 +51,7 @@
         var d = document.documentElement,
           s =
             localStorage.getItem('miniclaw-theme') ||
-            localStorage.getItem('happyclaw-theme');
+            localStorage.getItem('miniclaw-theme');
         if (
           s === 'dark' ||
           (s === 'system' &&
@@ -60,12 +60,12 @@
           d.classList.add('dark');
         var c =
           localStorage.getItem('miniclaw-color-scheme') ||
-          localStorage.getItem('happyclaw-color-scheme');
+          localStorage.getItem('miniclaw-color-scheme');
         if (c === 'orange') d.classList.add('theme-orange');
         if (c === 'neutral') d.classList.add('theme-neutral');
         if (
           (localStorage.getItem('miniclaw-font-style') ||
-            localStorage.getItem('happyclaw-font-style')) === 'anthropic'
+            localStorage.getItem('miniclaw-font-style')) === 'anthropic'
         )
           d.classList.add('font-anthropic');
       })();

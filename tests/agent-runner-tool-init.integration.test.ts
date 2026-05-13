@@ -5,7 +5,7 @@ import { afterAll, describe, expect, test } from 'vitest';
 
 import { createMcpTools } from '../container/agent-runner/src/mcp-tools.js';
 
-const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-tool-init-'));
+const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-tool-init-'));
 const runnerRoot = path.resolve('container/agent-runner');
 
 function cleanEnv(): Record<string, string> {
@@ -42,7 +42,7 @@ afterAll(() => {
   fs.rmSync(cwd, { recursive: true, force: true });
 });
 
-describe('HappyClaw tool initialization', () => {
+describe('Miniclaw tool initialization', () => {
   test('uses the Pi runtime packages pinned by the runner build', () => {
     const runnerPackage = JSON.parse(
       fs.readFileSync(path.join(runnerRoot, 'package.json'), 'utf8'),

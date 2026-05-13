@@ -93,7 +93,7 @@ describe('routeRestore', () => {
 
     it('rejects a previously-saved route that became blacklisted', () => {
       // Manually inject a blacklisted route to simulate stale storage.
-      memoryStorage.setItem('happyclaw-pwa-last-route', '/login');
+      memoryStorage.setItem('miniclaw-pwa-last-route', '/login');
       expect(getLastRoute()).toBeNull();
     });
   });

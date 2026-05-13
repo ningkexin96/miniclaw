@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-const DATA_DIR = '/tmp/happyclaw-group-queue-mutation-pause';
+const DATA_DIR = '/tmp/miniclaw-group-queue-mutation-pause';
 
 vi.mock('../src/config.js', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),

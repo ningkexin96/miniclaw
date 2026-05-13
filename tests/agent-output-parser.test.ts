@@ -294,8 +294,8 @@ describe('attachStdoutHandler — framed output parsing (marker collision)', () 
     return collected;
   }
 
-  const S = '---HAPPYCLAW_OUTPUT_START---';
-  const E = '---HAPPYCLAW_OUTPUT_END---';
+  const S = '---MINICLAW_OUTPUT_START---';
+  const E = '---MINICLAW_OUTPUT_END---';
 
   test('parses a normal framed result', async () => {
     const out = await runParser([

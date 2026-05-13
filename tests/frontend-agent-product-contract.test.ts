@@ -62,7 +62,7 @@ describe('Agent-first frontend product contracts', () => {
   it('keeps the Agent management page scoped to custom Agents', () => {
     expect(
       getCustomAgentProfiles([
-        { id: 'happyclaw', is_default: true },
+        { id: 'miniclaw', is_default: true },
         { id: 'reviewer', is_default: false },
       ]),
     ).toEqual([{ id: 'reviewer', is_default: false }]);
@@ -135,21 +135,21 @@ describe('Agent-first frontend product contracts', () => {
     ]);
   });
 
-  it('keeps the default HappyClaw Agent first and retains its internal home context', () => {
-    const home = workspace('web:main', 'agent-happyclaw', 'HappyClaw');
+  it('keeps the default Miniclaw Agent first and retains its internal home context', () => {
+    const home = workspace('web:main', 'agent-miniclaw', 'Miniclaw');
     home.is_my_home = true;
 
     const sections = groupWorkspacesByAgent(
       [
         workspace('web:review', 'agent-reviewer', '代码审查员'),
-        workspace('web:project', 'agent-happyclaw', 'HappyClaw'),
+        workspace('web:project', 'agent-miniclaw', 'Miniclaw'),
         home,
       ],
-      'agent-happyclaw',
+      'agent-miniclaw',
     );
 
     expect(sections.map((section) => section.name)).toEqual([
-      'HappyClaw',
+      'Miniclaw',
       '代码审查员',
     ]);
     expect(sections[0]).toMatchObject({
@@ -159,11 +159,11 @@ describe('Agent-first frontend product contracts', () => {
   });
 
   it('keeps the home context separate from additional Agent workspaces for navigation', () => {
-    const home = workspace('web:main', 'agent-happyclaw', 'HappyClaw');
+    const home = workspace('web:main', 'agent-miniclaw', 'Miniclaw');
     home.is_my_home = true;
     const [section] = groupWorkspacesByAgent(
-      [workspace('web:project', 'agent-happyclaw', 'HappyClaw'), home],
-      'agent-happyclaw',
+      [workspace('web:project', 'agent-miniclaw', 'Miniclaw'), home],
+      'agent-miniclaw',
     );
 
     expect(getAgentNavigationTargets(section)).toMatchObject({
@@ -173,11 +173,11 @@ describe('Agent-first frontend product contracts', () => {
   });
 
   it('presents the home context as the named main workspace of the primary Agent', () => {
-    const home = workspace('web:main', 'agent-happyclaw', 'HappyClaw');
+    const home = workspace('web:main', 'agent-miniclaw', 'Miniclaw');
     home.is_my_home = true;
     const [section] = groupWorkspacesByAgent(
-      [workspace('web:project', 'agent-happyclaw', 'HappyClaw'), home],
-      'agent-happyclaw',
+      [workspace('web:project', 'agent-miniclaw', 'Miniclaw'), home],
+      'agent-miniclaw',
     );
 
     expect(
@@ -186,28 +186,28 @@ describe('Agent-first frontend product contracts', () => {
         name,
       })),
     ).toEqual([
-      { jid: 'web:main', name: 'HappyClaw' },
+      { jid: 'web:main', name: 'Miniclaw' },
       { jid: 'web:project', name: 'web:project' },
     ]);
   });
 
-  it('separates HappyClaw as the primary Agent from custom Agents', () => {
+  it('separates Miniclaw as the primary Agent from custom Agents', () => {
     const sections = groupWorkspacesByAgent(
       [
-        workspace('web:main', 'agent-happyclaw', 'HappyClaw'),
+        workspace('web:main', 'agent-miniclaw', 'Miniclaw'),
         workspace('web:review', 'agent-reviewer', '代码审查员'),
       ],
-      'agent-happyclaw',
+      'agent-miniclaw',
     );
 
     const partitioned = partitionAgentWorkspaceSections(sections);
-    expect(partitioned.primary?.name).toBe('HappyClaw');
+    expect(partitioned.primary?.name).toBe('Miniclaw');
     expect(partitioned.custom.map((section) => section.name)).toEqual([
       '代码审查员',
     ]);
   });
 
-  it('keeps the primary HappyClaw Agent fixed open while custom Agents remain collapsible', () => {
+  it('keeps the primary Miniclaw Agent fixed open while custom Agents remain collapsible', () => {
     expect(isAgentSectionCollapsible({ isDefault: true })).toBe(false);
     expect(isAgentSectionCollapsible({ isDefault: false })).toBe(true);
   });

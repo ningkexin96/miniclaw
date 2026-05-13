@@ -1,4 +1,4 @@
-export interface HappyClawBootstrapTurn {
+export interface MiniclawBootstrapTurn {
   turnId?: string;
   isHome: boolean;
   isDefaultProfile: boolean;
@@ -7,11 +7,11 @@ export interface HappyClawBootstrapTurn {
 
 /**
  * Restrict the one-shot first-wake ritual to a real interactive turn of the
- * built-in HappyClaw in Home. Process warmups have no turnId; scheduled runs,
+ * built-in Miniclaw in Home. Process warmups have no turnId; scheduled runs,
  * custom Agents, and non-Home workspaces are always excluded.
  */
-export function isHappyClawBootstrapTurn(
-  input: HappyClawBootstrapTurn,
+export function isMiniclawBootstrapTurn(
+  input: MiniclawBootstrapTurn,
 ): boolean {
   return Boolean(
     input.turnId &&
@@ -21,7 +21,7 @@ export function isHappyClawBootstrapTurn(
   );
 }
 
-export interface HappyClawOwnerProfileRuntime {
+export interface MiniclawOwnerProfileRuntime {
   isHome: boolean;
   isDefaultProfile: boolean;
   isScheduledTask?: boolean;
@@ -34,8 +34,8 @@ export interface HappyClawOwnerProfileRuntime {
  * runner can later serve an admitted owner turn. Per-turn data and mutations
  * remain host-authorized; scheduled/task/spawn runtimes never receive it.
  */
-export function isHappyClawOwnerProfileRuntimeStructurallyEligible(
-  input: HappyClawOwnerProfileRuntime,
+export function isMiniclawOwnerProfileRuntimeStructurallyEligible(
+  input: MiniclawOwnerProfileRuntime,
 ): boolean {
   return Boolean(
     input.isHome &&

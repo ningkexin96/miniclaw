@@ -26,7 +26,7 @@ function completedWorkflow() {
     taskId: 'ws4k8unmd',
     runId: 'wf_b870d806-6c4',
     workflowName: 'analyze-github-user',
-    summary: '分析 GitHub 用户 riba2534 最近的活跃情况',
+    summary: '分析 GitHub 用户 helson 最近的活跃情况',
     status: 'completed',
     startTime: Date.parse('2026-07-21T06:30:23.529Z'),
     timestamp: '2026-07-21T06:37:30.251Z',

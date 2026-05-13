@@ -15,7 +15,7 @@ vi.stubGlobal('localStorage', memoryStorage);
 
 const { getWorkspaceLastAgent, setWorkspaceLastAgent } = await import('../web/src/utils/workspaceLastAgent');
 
-const KEY = 'happyclaw-workspace-last-agent';
+const KEY = 'miniclaw-workspace-last-agent';
 
 describe('workspaceLastAgent', () => {
   beforeEach(() => {

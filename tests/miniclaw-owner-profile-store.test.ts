@@ -8,7 +8,7 @@ import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import type { WorkspaceMemoryMutationContext } from '../src/memory-store.js';
 
 const root = fs.mkdtempSync(
-  path.join(os.tmpdir(), 'happyclaw-owner-profile-store-'),
+  path.join(os.tmpdir(), 'miniclaw-owner-profile-store-'),
 );
 const storeDir = path.join(root, 'store');
 const groupsDir = path.join(root, 'groups');
@@ -73,7 +73,7 @@ function reservedRows(raw: Database.Database, workspaceJid: string) {
     )
     .all(
       workspaceJid,
-      memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+      memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
     ) as Array<{
     id: string;
     content: string;
@@ -105,11 +105,11 @@ afterAll(() => {
   fs.rmSync(root, { recursive: true, force: true });
 });
 
-describe('HappyClaw owner preferred-address facade', () => {
+describe('Miniclaw owner preferred-address facade', () => {
   test('set is no-op aware, updates with CAS, clears, and restores without losing history', () => {
     const workspaceJid = createWorkspace('lifecycle');
 
-    const empty = ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid);
+    const empty = ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid);
     expect(empty).toMatchObject({
       workspaceJid,
       preferredAddress: null,
@@ -117,7 +117,7 @@ describe('HappyClaw owner preferred-address facade', () => {
       onboarding: { state: 'pending' },
     });
 
-    const created = ownerProfile.setHappyClawOwnerPreferredAddress({
+    const created = ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '小何',
       expectedRevision: 0,
@@ -151,7 +151,7 @@ describe('HappyClaw owner preferred-address facade', () => {
     };
     expect(countsAfterCreate).toEqual({ versions: 1, audits: 1, outbox: 1 });
 
-    const noOp = ownerProfile.setHappyClawOwnerPreferredAddress({
+    const noOp = ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '  小何  ',
       expectedRevision: 1,
@@ -170,7 +170,7 @@ describe('HappyClaw owner preferred-address facade', () => {
         .get(firstItemId),
     ).toEqual({ count: 1 });
 
-    const updated = ownerProfile.setHappyClawOwnerPreferredAddress({
+    const updated = ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '何先生',
       expectedRevision: 1,
@@ -206,7 +206,7 @@ describe('HappyClaw owner preferred-address facade', () => {
       session_id: `session-for-${ACTUAL_SENDER_ID}`,
     });
 
-    const cleared = ownerProfile.clearHappyClawOwnerPreferredAddress({
+    const cleared = ownerProfile.clearMiniclawOwnerPreferredAddress({
       workspaceJid,
       expectedRevision: 2,
       context: mutationContext(),
@@ -225,7 +225,7 @@ describe('HappyClaw owner preferred-address facade', () => {
     ]);
 
     // Clearing the value is not an instruction to repeat first-wake.
-    const postClearClaim = ownerProfile.claimHappyClawOwnerIntroduction({
+    const postClearClaim = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'new-session-after-clear',
     });
@@ -237,7 +237,7 @@ describe('HappyClaw owner preferred-address facade', () => {
       },
     });
 
-    const restored = ownerProfile.setHappyClawOwnerPreferredAddress({
+    const restored = ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '老何',
       expectedRevision: 3,
@@ -272,7 +272,7 @@ describe('HappyClaw owner preferred-address facade', () => {
         )
         .get(
           workspaceJid,
-          memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         ),
     ).toEqual({ count: 4 });
     raw.close();
@@ -280,12 +280,12 @@ describe('HappyClaw owner preferred-address facade', () => {
 
   test('stale set and clear compare-and-swap attempts preserve the winner', () => {
     const workspaceJid = createWorkspace('cas');
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '第一版',
       context: mutationContext(),
     });
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '获胜版本',
       expectedRevision: 1,
@@ -294,14 +294,14 @@ describe('HappyClaw owner preferred-address facade', () => {
 
     for (const operation of [
       () =>
-        ownerProfile.setHappyClawOwnerPreferredAddress({
+        ownerProfile.setMiniclawOwnerPreferredAddress({
           workspaceJid,
           preferredAddress: '丢失版本',
           expectedRevision: 1,
           context: mutationContext(),
         }),
       () =>
-        ownerProfile.clearHappyClawOwnerPreferredAddress({
+        ownerProfile.clearMiniclawOwnerPreferredAddress({
           workspaceJid,
           expectedRevision: 1,
           context: mutationContext(),
@@ -312,7 +312,7 @@ describe('HappyClaw owner preferred-address facade', () => {
       );
     }
     expect(
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid),
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid),
     ).toMatchObject({ preferredAddress: '获胜版本', revision: 2 });
   });
 
@@ -325,8 +325,8 @@ describe('HappyClaw owner preferred-address facade', () => {
       idempotencyKey: 'owner-profile-first-set',
       context: mutationContext(),
     };
-    const first = ownerProfile.setHappyClawOwnerPreferredAddress(request);
-    const replay = ownerProfile.setHappyClawOwnerPreferredAddress(request);
+    const first = ownerProfile.setMiniclawOwnerPreferredAddress(request);
+    const replay = ownerProfile.setMiniclawOwnerPreferredAddress(request);
     expect(first).toMatchObject({
       changed: true,
       replayed: false,
@@ -350,7 +350,7 @@ describe('HappyClaw owner preferred-address facade', () => {
     raw.close();
 
     expect(() =>
-      ownerProfile.setHappyClawOwnerPreferredAddress({
+      ownerProfile.setMiniclawOwnerPreferredAddress({
         ...request,
         preferredAddress: '复用 key 的不同请求',
       }),
@@ -359,29 +359,29 @@ describe('HappyClaw owner preferred-address facade', () => {
 
   test('projection is read-through on both cold and already-warm callers', () => {
     const workspaceJid = createWorkspace('projection-refresh');
-    const cold = ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid);
+    const cold = ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid);
     expect(cold.preferredAddress).toBeNull();
 
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '冷启动称呼',
       context: mutationContext(),
     });
     const firstWarm =
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid);
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid);
     expect(firstWarm).toMatchObject({
       preferredAddress: '冷启动称呼',
       revision: 1,
     });
 
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '热会话刷新称呼',
       expectedRevision: 1,
       context: mutationContext(),
     });
     const refreshed =
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid);
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid);
     expect(refreshed).toMatchObject({
       preferredAddress: '热会话刷新称呼',
       revision: 2,
@@ -391,7 +391,7 @@ describe('HappyClaw owner preferred-address facade', () => {
 
   test('restores a legacy deleted reserved item on the same revision lineage', () => {
     const workspaceJid = createWorkspace('legacy-deleted-restore');
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '删除前称呼',
       expectedRevision: 0,
@@ -422,7 +422,7 @@ describe('HappyClaw owner preferred-address facade', () => {
       .run(
         item.id,
         workspaceJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         deletedAt,
       );
     raw
@@ -443,7 +443,7 @@ describe('HappyClaw owner preferred-address facade', () => {
       .run(item.id, workspaceJid, deletedAt);
     raw.close();
 
-    const restored = ownerProfile.setHappyClawOwnerPreferredAddress({
+    const restored = ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '恢复后的称呼',
       expectedRevision: 2,
@@ -484,11 +484,11 @@ describe('HappyClaw owner preferred-address facade', () => {
   });
 });
 
-describe('HappyClaw owner introduction onboarding state', () => {
+describe('Miniclaw owner introduction onboarding state', () => {
   test('claims first wake without consuming it until a fenced acknowledgement', () => {
     const workspaceJid = createWorkspace('onboarding-lease');
     const now = '2026-07-28T12:00:00.000Z';
-    const first = ownerProfile.claimHappyClawOwnerIntroduction({
+    const first = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'session-a',
       leaseMs: 60_000,
@@ -504,7 +504,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       projection: { onboarding: { state: 'claimed' } },
     });
 
-    const sameRunnerBeforeAck = ownerProfile.claimHappyClawOwnerIntroduction({
+    const sameRunnerBeforeAck = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'session-a',
       leaseMs: 60_000,
@@ -517,7 +517,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       leaseToken: first.leaseToken,
     });
 
-    const contending = ownerProfile.claimHappyClawOwnerIntroduction({
+    const contending = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'session-b',
       leaseMs: 60_000,
@@ -533,7 +533,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       projection: { onboarding: { state: 'claimed' } },
     });
 
-    const reclaimed = ownerProfile.claimHappyClawOwnerIntroduction({
+    const reclaimed = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'session-b',
       leaseMs: 60_000,
@@ -550,7 +550,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
     expect(reclaimed.leaseToken).toBeGreaterThan(first.leaseToken!);
 
     expect(() =>
-      ownerProfile.acknowledgeHappyClawOwnerIntroduction({
+      ownerProfile.acknowledgeMiniclawOwnerIntroduction({
         workspaceJid,
         leaseOwner: 'session-a',
         leaseToken: reclaimed.leaseToken!,
@@ -558,7 +558,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       }),
     ).toThrow('lease no longer matches');
     expect(() =>
-      ownerProfile.acknowledgeHappyClawOwnerIntroduction({
+      ownerProfile.acknowledgeMiniclawOwnerIntroduction({
         workspaceJid,
         leaseOwner: 'session-b',
         leaseToken: first.leaseToken!,
@@ -566,7 +566,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       }),
     ).toThrow('lease no longer matches');
 
-    const acknowledged = ownerProfile.acknowledgeHappyClawOwnerIntroduction({
+    const acknowledged = ownerProfile.acknowledgeMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'session-b',
       leaseToken: reclaimed.leaseToken!,
@@ -582,7 +582,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       },
     });
     expect(
-      ownerProfile.acknowledgeHappyClawOwnerIntroduction({
+      ownerProfile.acknowledgeMiniclawOwnerIntroduction({
         workspaceJid,
         leaseOwner: 'session-b',
         leaseToken: reclaimed.leaseToken!,
@@ -590,7 +590,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       }),
     ).toMatchObject({ acknowledged: false });
 
-    const skipped = ownerProfile.skipHappyClawOwnerIntroduction({
+    const skipped = ownerProfile.skipMiniclawOwnerIntroduction({
       workspaceJid,
       expectedOnboardingRevision: acknowledged.projection.onboarding.revision,
       context: mutationContext(),
@@ -603,7 +603,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       },
     });
     expect(
-      ownerProfile.claimHappyClawOwnerIntroduction({
+      ownerProfile.claimMiniclawOwnerIntroduction({
         workspaceJid,
         leaseOwner: 'session-c',
         now: '2026-07-28T13:00:00.000Z',
@@ -616,7 +616,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
 
   test('runner exit releases an unacknowledged lease without consuming first wake', () => {
     const workspaceJid = createWorkspace('onboarding-release');
-    const first = ownerProfile.claimHappyClawOwnerIntroduction({
+    const first = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'failed-runner',
       now: '2026-07-28T12:00:00.000Z',
@@ -624,12 +624,12 @@ describe('HappyClaw owner introduction onboarding state', () => {
     expect(first).toMatchObject({ firstWake: true, leaseAcquired: true });
 
     expect(
-      ownerProfile.releaseHappyClawOwnerIntroductionLease(
+      ownerProfile.releaseMiniclawOwnerIntroductionLease(
         'failed-runner',
         '2026-07-28T12:00:01.000Z',
       ),
     ).toBe(1);
-    const retry = ownerProfile.claimHappyClawOwnerIntroduction({
+    const retry = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'retry-runner',
       now: '2026-07-28T12:00:02.000Z',
@@ -649,7 +649,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
 
   test('normal database restart does not consume an unacknowledged first wake', () => {
     const workspaceJid = createWorkspace('onboarding-restart');
-    const first = ownerProfile.claimHappyClawOwnerIntroduction({
+    const first = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'restart-runner',
       leaseMs: 60_000,
@@ -660,7 +660,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
     db.closeDatabase();
     db.initDatabase();
 
-    const resumed = ownerProfile.claimHappyClawOwnerIntroduction({
+    const resumed = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid,
       leaseOwner: 'restart-runner',
       leaseMs: 60_000,
@@ -679,7 +679,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
     const historicalWorkspaceJid = createWorkspace(
       'pre-release-v66-first-wake',
     );
-    const original = ownerProfile.claimHappyClawOwnerIntroduction({
+    const original = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid: historicalWorkspaceJid,
       leaseOwner: 'historical-session',
       leaseMs: 60_000,
@@ -710,7 +710,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
       )
       .run(
         historicalWorkspaceJid,
-        ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY,
+        ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY,
       );
     legacy.exec(
       'ALTER TABLE workspace_onboarding_states DROP COLUMN first_wake_at',
@@ -727,13 +727,13 @@ describe('HappyClaw owner introduction onboarding state', () => {
     db.initDatabase();
 
     const historicalProjection =
-      ownerProfile.getHappyClawOwnerProfileProjection(historicalWorkspaceJid);
+      ownerProfile.getMiniclawOwnerProfileProjection(historicalWorkspaceJid);
     expect(historicalProjection.onboarding).toMatchObject({
       state: 'claimed',
       leaseToken: 1,
       firstWakeAt: '2026-07-28T12:00:00.000Z',
     });
-    const reclaimed = ownerProfile.claimHappyClawOwnerIntroduction({
+    const reclaimed = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid: historicalWorkspaceJid,
       leaseOwner: 'reclaimed-session',
       leaseMs: 60_000,
@@ -748,7 +748,7 @@ describe('HappyClaw owner introduction onboarding state', () => {
     });
 
     const freshWorkspaceJid = createWorkspace('fresh-v66-first-wake');
-    const fresh = ownerProfile.claimHappyClawOwnerIntroduction({
+    const fresh = ownerProfile.claimMiniclawOwnerIntroduction({
       workspaceJid: freshWorkspaceJid,
       leaseOwner: 'fresh-session',
       leaseMs: 60_000,
@@ -768,7 +768,7 @@ describe('v66 owner-profile migration boundary', () => {
   test('does not mistake an address containing a legacy sentinel phrase for the sentinel itself', () => {
     const workspaceJid = createWorkspace('legacy-sentinel-substring');
     const legitimateAddress = '小何（不愿提供英文名）';
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: legitimateAddress,
       expectedRevision: 0,
@@ -798,7 +798,7 @@ describe('v66 owner-profile migration boundary', () => {
         `DELETE FROM workspace_onboarding_states
          WHERE workspace_jid = ? AND flow_key = ?`,
       )
-      .run(workspaceJid, ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY);
+      .run(workspaceJid, ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY);
     raw
       .prepare(
         `UPDATE router_state
@@ -812,7 +812,7 @@ describe('v66 owner-profile migration boundary', () => {
     db.initDatabase();
 
     expect(
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid),
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid),
     ).toMatchObject({
       preferredAddress: legitimateAddress,
       revision: 1,
@@ -840,7 +840,7 @@ describe('v66 owner-profile migration boundary', () => {
 
   test('matches the exact legacy skip sentinel once and preserves skipped across later starts', () => {
     const workspaceJid = createWorkspace('legacy-exact-sentinel');
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '主人不愿提供称呼',
       expectedRevision: 0,
@@ -854,7 +854,7 @@ describe('v66 owner-profile migration boundary', () => {
         `DELETE FROM workspace_onboarding_states
          WHERE workspace_jid = ? AND flow_key = ?`,
       )
-      .run(workspaceJid, ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY);
+      .run(workspaceJid, ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY);
     legacy
       .prepare(
         `UPDATE router_state
@@ -868,7 +868,7 @@ describe('v66 owner-profile migration boundary', () => {
     db.initDatabase();
 
     expect(
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid),
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid),
     ).toMatchObject({
       preferredAddress: null,
       revision: 2,
@@ -892,7 +892,7 @@ describe('v66 owner-profile migration boundary', () => {
            FROM workspace_onboarding_states
            WHERE workspace_jid = ? AND flow_key = ?`,
         )
-        .get(workspaceJid, ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY),
+        .get(workspaceJid, ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY),
       artifacts: migrated
         .prepare(
           `SELECT
@@ -908,7 +908,7 @@ describe('v66 owner-profile migration boundary', () => {
     db.initDatabase();
 
     expect(
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid),
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid),
     ).toMatchObject({
       preferredAddress: null,
       revision: 2,
@@ -929,7 +929,7 @@ describe('v66 owner-profile migration boundary', () => {
            FROM workspace_onboarding_states
            WHERE workspace_jid = ? AND flow_key = ?`,
         )
-        .get(workspaceJid, ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY),
+        .get(workspaceJid, ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY),
       artifacts: restarted
         .prepare(
           `SELECT
@@ -956,11 +956,11 @@ describe('reserved canonical-key integrity', () => {
         kind: 'fact',
         content: 'generic create must not own this key',
         canonicalKey:
-          memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       }),
     ).toThrowError(expect.objectContaining({ code: 'reserved_canonical_key' }));
 
-    const dedicated = ownerProfile.setHappyClawOwnerPreferredAddress({
+    const dedicated = ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '专用接口写入',
       context: mutationContext(),
@@ -1004,12 +1004,12 @@ describe('reserved canonical-key integrity', () => {
         itemId: ordinary.item.id,
         expectedRevision: 1,
         canonicalKey:
-          memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       }),
     ).toThrowError(expect.objectContaining({ code: 'reserved_canonical_key' }));
 
     const projection =
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid);
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid);
     expect(projection).toMatchObject({
       preferredAddress: '专用接口写入',
       revision: 1,
@@ -1041,7 +1041,7 @@ describe('reserved canonical-key integrity', () => {
   test('legacy duplicates are reconciled before a partial unique index is enforced', () => {
     const workspaceJid = createWorkspace('legacy-reconcile');
     const actor = { id: OWNER_ID, role: 'member' as const };
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '当前称呼',
       context: mutationContext(),
@@ -1070,7 +1070,7 @@ describe('reserved canonical-key integrity', () => {
       )
       .get(
         workspaceJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       ) as Record<string, unknown>;
     const duplicateId = 'wmi_owner_profile_legacy_duplicate';
     raw
@@ -1089,7 +1089,7 @@ describe('reserved canonical-key integrity', () => {
         duplicateId,
         current.store_id,
         workspaceJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         '2026-01-01T00:00:00.000Z',
         '2026-01-01T00:00:00.000Z',
       );
@@ -1107,7 +1107,7 @@ describe('reserved canonical-key integrity', () => {
       .run(
         duplicateId,
         workspaceJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         '2026-01-01T00:00:00.000Z',
       );
     raw
@@ -1127,7 +1127,7 @@ describe('reserved canonical-key integrity', () => {
       .run(
         duplicateId,
         workspaceJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       );
     raw
       .prepare(
@@ -1167,7 +1167,7 @@ describe('reserved canonical-key integrity', () => {
         .get(duplicateId),
     ).toEqual({ count: 2 });
     expect(
-      ownerProfile.getHappyClawOwnerProfileProjection(workspaceJid),
+      ownerProfile.getMiniclawOwnerProfileProjection(workspaceJid),
     ).toMatchObject({ preferredAddress: '当前称呼' });
     const invariant = verified
       .prepare(
@@ -1244,7 +1244,7 @@ describe('reserved canonical-key integrity', () => {
           'wmi_owner_profile_illegal_duplicate',
           current.store_id,
           workspaceJid,
-          memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
           '2026-07-28T14:00:00.000Z',
           '2026-07-28T14:00:00.000Z',
         ),
@@ -1264,7 +1264,7 @@ describe('reserved canonical-key integrity', () => {
            FROM workspace_onboarding_states
            WHERE workspace_jid = ? AND flow_key = ?`,
         )
-        .get(workspaceJid, ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY),
+        .get(workspaceJid, ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY),
       artifacts: verified
         .prepare(
           `SELECT
@@ -1293,7 +1293,7 @@ describe('reserved canonical-key integrity', () => {
            FROM workspace_onboarding_states
            WHERE workspace_jid = ? AND flow_key = ?`,
         )
-        .get(workspaceJid, ownerProfile.HAPPYCLAW_OWNER_INTRODUCTION_FLOW_KEY),
+        .get(workspaceJid, ownerProfile.MINICLAW_OWNER_INTRODUCTION_FLOW_KEY),
       artifacts: restarted
         .prepare(
           `SELECT
@@ -1308,7 +1308,7 @@ describe('reserved canonical-key integrity', () => {
 
   test('legacy generic idempotency replay records cannot disclose the reserved item', () => {
     const workspaceJid = createWorkspace('legacy-idempotency-replay');
-    ownerProfile.setHappyClawOwnerPreferredAddress({
+    ownerProfile.setMiniclawOwnerPreferredAddress({
       workspaceJid,
       preferredAddress: '绝不能由 generic replay 返回',
       expectedRevision: 0,
@@ -1324,7 +1324,7 @@ describe('reserved canonical-key integrity', () => {
       )
       .get(
         workspaceJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       ) as { id: string; store_id: string; revision: number };
     const createIdempotencyKey = 'legacy-generic-create-replay';
     const updateIdempotencyKey = 'legacy-generic-update-replay';
@@ -1353,7 +1353,7 @@ describe('reserved canonical-key integrity', () => {
         id: item.id,
         workspaceJid,
         canonicalKey:
-          memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         content: '绝不能由 generic replay 返回',
         revision: item.revision,
       },

@@ -7,7 +7,7 @@ import { describe, expect, test, vi } from 'vitest';
 
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const testRoot = fs.mkdtempSync(
-  path.join(os.tmpdir(), 'happyclaw-container-permissions-'),
+  path.join(os.tmpdir(), 'miniclaw-container-permissions-'),
 );
 
 vi.mock('../src/config.js', async (importOriginal) => {
@@ -17,7 +17,7 @@ vi.mock('../src/config.js', async (importOriginal) => {
     DATA_DIR: path.join(testRoot, 'data'),
     GROUPS_DIR: path.join(testRoot, 'data', 'groups'),
     STORE_DIR: path.join(testRoot, 'data', 'db'),
-    CONTAINER_IMAGE: 'happyclaw-agent:test',
+    CONTAINER_IMAGE: 'miniclaw-agent:test',
     TIMEZONE: 'UTC',
   };
 });
@@ -160,9 +160,9 @@ describe('buildContainerArgs identity contract', () => {
     });
     expect(envArgs(args)).toEqual(
       expect.arrayContaining([
-        'HAPPYCLAW_HOST_IDENTITY_MODE=direct',
-        'HAPPYCLAW_HOST_UID=1002',
-        'HAPPYCLAW_HOST_GID=1234',
+        'MINICLAW_HOST_IDENTITY_MODE=direct',
+        'MINICLAW_HOST_UID=1002',
+        'MINICLAW_HOST_GID=1234',
       ]),
     );
   });
@@ -179,12 +179,12 @@ describe('buildContainerArgs identity contract', () => {
       uid: 1002,
       gid: 1002,
     });
-    expect(envArgs(args)).toContain(`HAPPYCLAW_HOST_IDENTITY_MODE=${mode}`);
+    expect(envArgs(args)).toContain(`MINICLAW_HOST_IDENTITY_MODE=${mode}`);
     expect(
-      envArgs(args).some((arg) => arg.startsWith('HAPPYCLAW_HOST_UID=')),
+      envArgs(args).some((arg) => arg.startsWith('MINICLAW_HOST_UID=')),
     ).toBe(false);
     expect(
-      envArgs(args).some((arg) => arg.startsWith('HAPPYCLAW_HOST_GID=')),
+      envArgs(args).some((arg) => arg.startsWith('MINICLAW_HOST_GID=')),
     ).toBe(false);
   });
 });
@@ -223,19 +223,19 @@ describe('entrypoint permission contract', () => {
 
   test('uses fixed root-owned helpers and shadows stale malicious env values', () => {
     expect(entrypoint).toContain('source /app/session-permissions.sh');
-    expect(entrypoint).toContain('happyclaw_source_runtime_env');
+    expect(entrypoint).toContain('miniclaw_source_runtime_env');
     expect(helper).toContain(
       '/usr/local/bin/node /app/session-permissions-watcher.mjs',
     );
-    expect(helper).not.toContain('HAPPYCLAW_SESSION_PERMISSION_HELPER:-');
+    expect(helper).not.toContain('MINICLAW_SESSION_PERMISSION_HELPER:-');
     expect(helper).not.toContain('groupmod --non-unique');
-    expect(helper).toContain('local HAPPYCLAW_SESSION_ROOT=');
-    expect(helper).toContain('local HAPPYCLAW_INTERNAL_WATCHER_PID=');
+    expect(helper).toContain('local MINICLAW_SESSION_ROOT=');
+    expect(helper).toContain('local MINICLAW_INTERNAL_WATCHER_PID=');
     expect(entrypoint).toContain(
       'npx tsc --outDir /tmp/dist --incremental false',
     );
     expect(
-      entrypoint.indexOf('happyclaw_prepare_generated_path dist'),
+      entrypoint.indexOf('miniclaw_prepare_generated_path dist'),
     ).toBeLessThan(
       entrypoint.indexOf('ln -s /app/node_modules /tmp/dist/node_modules'),
     );
@@ -305,8 +305,8 @@ describe('entrypoint permission contract', () => {
 });
 
 const integrationImage =
-  process.env.HAPPYCLAW_CONTAINER_PERMISSION_TEST_IMAGE ??
-  'riba2534/happyclaw-agent:latest';
+  process.env.MINICLAW_CONTAINER_PERMISSION_TEST_IMAGE ??
+  'helsome/miniclaw-agent:latest';
 let integrationImageAvailable = false;
 try {
   execFileSync('docker', ['image', 'inspect', integrationImage], {
@@ -393,10 +393,10 @@ describe.skipIf(!integrationImageAvailable)(
           shadow_gid=$(getent group shadow | cut -d: -f3)
           original_gid=$(id -g node)
           test -n "$shadow_gid"
-          HAPPYCLAW_HOST_IDENTITY_MODE=direct
-          HAPPYCLAW_HOST_UID=12346
-          HAPPYCLAW_HOST_GID="$shadow_gid"
-          happyclaw_configure_node_identity
+          MINICLAW_HOST_IDENTITY_MODE=direct
+          MINICLAW_HOST_UID=12346
+          MINICLAW_HOST_GID="$shadow_gid"
+          miniclaw_configure_node_identity
           install -o 12346 -g "$shadow_gid" -m 0600 /dev/null /tmp/host-owned
           setpriv --reuid=12346 --regid="$original_gid" --clear-groups -- \
             test -r /tmp/host-owned
@@ -415,10 +415,10 @@ describe.skipIf(!integrationImageAvailable)(
           source /app/session-permissions.sh
           shadow_gid=$(getent group shadow | cut -d: -f3)
           original_gid=$(id -g node)
-          HAPPYCLAW_HOST_IDENTITY_MODE=direct
-          HAPPYCLAW_HOST_UID=12346
-          HAPPYCLAW_HOST_GID="$shadow_gid"
-          happyclaw_configure_node_identity
+          MINICLAW_HOST_IDENTITY_MODE=direct
+          MINICLAW_HOST_UID=12346
+          MINICLAW_HOST_GID="$shadow_gid"
+          miniclaw_configure_node_identity
           test "$(id -u node)" = 12346
           test "$(id -g node)" = "$original_gid"
           install -o 12346 -g "$shadow_gid" -m 0600 /dev/null /tmp/host-owned
@@ -435,8 +435,8 @@ describe.skipIf(!integrationImageAvailable)(
       for (const mode of ['userns', 'unknown']) {
         expect(() =>
           runHelper(`
-            HAPPYCLAW_HOST_IDENTITY_MODE=${mode}
-            happyclaw_configure_node_identity
+            MINICLAW_HOST_IDENTITY_MODE=${mode}
+            miniclaw_configure_node_identity
           `),
         ).toThrow();
       }
@@ -455,16 +455,16 @@ describe.skipIf(!integrationImageAvailable)(
             chmod 0700 "$root"
             chmod 0600 "$root/legacy-file"
           done
-          HAPPYCLAW_HOST_IDENTITY_MODE=rootless
-          happyclaw_configure_node_identity
-          happyclaw_start_session_permission_watcher
+          MINICLAW_HOST_IDENTITY_MODE=rootless
+          miniclaw_configure_node_identity
+          miniclaw_start_session_permission_watcher
           for root in /home/node/.claude /home/node/.feishu-cli \
             /workspace/group /workspace/ipc /workspace/extra; do
             test "$(stat -c '%u:%g:%a' "$root")" = '0:1000:2770'
             test "$(stat -c '%u:%g:%a' "$root/legacy-file")" = \
               '0:1000:660'
           done
-          happyclaw_stop_session_permission_watcher
+          miniclaw_stop_session_permission_watcher
           printf upgraded-before-ready
         `),
       ).toBe('upgraded-before-ready');
@@ -480,14 +480,14 @@ describe.skipIf(!integrationImageAvailable)(
           chown 1000:1000 /home/node/.feishu-cli /workspace/group /workspace/extra
           chmod 0700 /home/node/.claude /home/node/.feishu-cli \
             /workspace/group /workspace/ipc /workspace/extra
-          HAPPYCLAW_HOST_IDENTITY_MODE=rootless
-          happyclaw_configure_node_identity
-          happyclaw_start_session_permission_watcher
+          MINICLAW_HOST_IDENTITY_MODE=rootless
+          miniclaw_configure_node_identity
+          miniclaw_start_session_permission_watcher
           for root in /home/node/.claude /home/node/.feishu-cli \
             /workspace/group /workspace/ipc /workspace/extra; do
             test "$(stat -c '%u:%g:%a' "$root")" = '0:1000:2770'
           done
-          happyclaw_stop_session_permission_watcher
+          miniclaw_stop_session_permission_watcher
           printf mixed-upgraded
         `),
       ).toBe('mixed-upgraded');
@@ -499,9 +499,9 @@ describe.skipIf(!integrationImageAvailable)(
           source /app/session-permissions.sh
           mkdir -p /home/node/.claude /workspace/{group,ipc,extra}
           chown 1234:1234 /workspace/group
-          HAPPYCLAW_HOST_IDENTITY_MODE=rootless
-          happyclaw_configure_node_identity
-          happyclaw_start_session_permission_watcher
+          MINICLAW_HOST_IDENTITY_MODE=rootless
+          miniclaw_configure_node_identity
+          miniclaw_start_session_permission_watcher
         `),
       ).toThrow();
     });
@@ -514,15 +514,15 @@ describe.skipIf(!integrationImageAvailable)(
           chown -R 1000:1000 /home/node/.claude /workspace/group
           chmod 0777 /home/node/.claude
           chmod 0666 /home/node/.claude/token.json
-          HAPPYCLAW_HOST_IDENTITY_MODE=direct
-          HAPPYCLAW_HOST_UID=12346
-          HAPPYCLAW_HOST_GID=12347
-          happyclaw_configure_node_identity
-          happyclaw_migrate_direct_managed_paths
+          MINICLAW_HOST_IDENTITY_MODE=direct
+          MINICLAW_HOST_UID=12346
+          MINICLAW_HOST_GID=12347
+          miniclaw_configure_node_identity
+          miniclaw_migrate_direct_managed_paths
           printf '%s|%s|%s' \
             "$(stat -c '%u:%g:%a' /home/node/.claude/token.json)" \
             "$(stat -c '%u:%g' /workspace/group/canary)" \
-            "$(find /home/node/.claude -maxdepth 1 -name '.happyclaw-owner-v2-*' | wc -l)"
+            "$(find /home/node/.claude -maxdepth 1 -name '.miniclaw-owner-v2-*' | wc -l)"
         `),
       ).toBe('12346:12347:600|1000:1000|0');
     });
@@ -532,16 +532,16 @@ describe.skipIf(!integrationImageAvailable)(
         runImageScript(`
           source /app/session-permissions.sh
           mkdir -p /home/node/.claude /workspace/{group,ipc,extra}
-          touch /home/node/.claude/.happyclaw-owner-v2-12346-12347
+          touch /home/node/.claude/.miniclaw-owner-v2-12346-12347
           touch /home/node/.claude/credential
           chown -R 1000:1000 /home/node/.claude
-          chmod 0600 /home/node/.claude/.happyclaw-owner-v2-12346-12347
+          chmod 0600 /home/node/.claude/.miniclaw-owner-v2-12346-12347
           chmod 0666 /home/node/.claude/credential
-          HAPPYCLAW_HOST_IDENTITY_MODE=direct
-          HAPPYCLAW_HOST_UID=12346
-          HAPPYCLAW_HOST_GID=12347
-          happyclaw_configure_node_identity
-          happyclaw_migrate_direct_managed_paths
+          MINICLAW_HOST_IDENTITY_MODE=direct
+          MINICLAW_HOST_UID=12346
+          MINICLAW_HOST_GID=12347
+          miniclaw_configure_node_identity
+          miniclaw_migrate_direct_managed_paths
           stat -c '%u:%g:%a' /home/node/.claude/credential
         `),
       ).toBe('12346:12347:600');
@@ -555,10 +555,10 @@ describe.skipIf(!integrationImageAvailable)(
             /workspace/{group,ipc,extra}
           node -e "const fs=require('fs'); for(let i=0;i<2000;i++) fs.writeFileSync('/home/node/.feishu-cli/f'+i,'',{mode:0o666})"
           chown -R 1000:1000 /home/node/.claude /home/node/.feishu-cli
-          HAPPYCLAW_HOST_IDENTITY_MODE=direct
-          HAPPYCLAW_HOST_UID=12346
-          HAPPYCLAW_HOST_GID=12347
-          happyclaw_configure_node_identity
+          MINICLAW_HOST_IDENTITY_MODE=direct
+          MINICLAW_HOST_UID=12346
+          MINICLAW_HOST_GID=12347
+          miniclaw_configure_node_identity
           for round in $(seq 1 5); do
             node /app/session-permissions-watcher.mjs --migrate-direct &
             first=$!
@@ -567,7 +567,7 @@ describe.skipIf(!integrationImageAvailable)(
             wait "$first"
             wait "$second"
           done
-          test "$(find /home/node/.feishu-cli -name '.happyclaw-owner-v2-*' | wc -l)" = 0
+          test "$(find /home/node/.feishu-cli -name '.miniclaw-owner-v2-*' | wc -l)" = 0
           stat -c '%u:%g:%a' /home/node/.feishu-cli/f1
         `),
       ).toBe('12346:12347:600');
@@ -578,14 +578,14 @@ describe.skipIf(!integrationImageAvailable)(
         runImageScript(`
           source /app/session-permissions.sh
           mkdir -p /home/node/.claude /workspace/{group,ipc,extra}
-          HAPPYCLAW_HOST_IDENTITY_MODE=direct
-          HAPPYCLAW_HOST_UID=12346
-          HAPPYCLAW_HOST_GID=12347
-          happyclaw_configure_node_identity
-          happyclaw_migrate_direct_managed_paths
+          MINICLAW_HOST_IDENTITY_MODE=direct
+          MINICLAW_HOST_UID=12346
+          MINICLAW_HOST_GID=12347
+          miniclaw_configure_node_identity
+          miniclaw_migrate_direct_managed_paths
           install -o 12346 -g 12347 -m 0666 /dev/null \
             /home/node/.claude/runtime-created
-          happyclaw_stop_session_permission_watcher
+          miniclaw_stop_session_permission_watcher
           stat -c '%u:%g:%a' /home/node/.claude/runtime-created
         `),
       ).toBe('12346:12347:600');
@@ -674,10 +674,10 @@ describe.skipIf(!integrationImageAvailable)(
         runImageScript(`
           source /app/session-permissions.sh
           mkdir -p /home/node/.claude /workspace/{group,ipc,extra}
-          HAPPYCLAW_HOST_IDENTITY_MODE=host-root
-          happyclaw_configure_node_identity
-          happyclaw_prepare_mounted_paths
-          happyclaw_start_session_permission_watcher
+          MINICLAW_HOST_IDENTITY_MODE=host-root
+          miniclaw_configure_node_identity
+          miniclaw_prepare_mounted_paths
+          miniclaw_start_session_permission_watcher
           install -d -o 0 -g 0 -m 0700 /workspace/group/live
           install -o 0 -g 0 -m 0600 /dev/null /workspace/group/live/file
           for attempt in $(seq 1 200); do
@@ -689,7 +689,7 @@ describe.skipIf(!integrationImageAvailable)(
             --clear-groups -- test -r /workspace/group/live/file
           test "$(stat -c %a /workspace/group/live)" = 700
           test "$(stat -c %a /workspace/group/live/file)" = 600
-          happyclaw_stop_session_permission_watcher
+          miniclaw_stop_session_permission_watcher
           printf repaired
         `),
       ).toBe('repaired');
@@ -724,7 +724,7 @@ describe.skipIf(!integrationImageAvailable)(
 
     test('restrictive prompt bind is copied read-only without touching source', () => {
       const prompts = fs.mkdtempSync(path.join(testRoot, 'runtime-prompts-'));
-      const prompt = path.join(prompts, 'identity.happyclaw.md');
+      const prompt = path.join(prompts, 'identity.miniclaw.md');
       fs.writeFileSync(prompt, 'runtime prompt', { mode: 0o600 });
       fs.chmodSync(prompts, 0o700);
       fs.chmodSync(prompt, 0o600);
@@ -735,13 +735,13 @@ describe.skipIf(!integrationImageAvailable)(
           `
             node /app/session-prompts-copy.mjs
             test "$(stat -c '%u:%g:%a' /tmp/prompts)" = '0:0:555'
-            test "$(stat -c '%u:%g:%a' /tmp/prompts/identity.happyclaw.md)" = \
+            test "$(stat -c '%u:%g:%a' /tmp/prompts/identity.miniclaw.md)" = \
               '0:0:444'
             setpriv --reuid="$(id -u node)" --regid="$(id -g node)" \
               --clear-groups -- sh -ceu '
-                test "$(cat /tmp/prompts/identity.happyclaw.md)" = "runtime prompt"
-                test ! -w /tmp/prompts/identity.happyclaw.md
-                test ! -w /app/prompts/identity.happyclaw.md
+                test "$(cat /tmp/prompts/identity.miniclaw.md)" = "runtime prompt"
+                test ! -w /tmp/prompts/identity.miniclaw.md
+                test ! -w /app/prompts/identity.miniclaw.md
               '
             printf copied
           `,
@@ -775,11 +775,11 @@ describe.skipIf(!integrationImageAvailable)(
       fs.writeFileSync(
         path.join(envDir, 'env'),
         [
-          "HAPPYCLAW_HOST_IDENTITY_MODE='unknown'",
-          "HAPPYCLAW_INTERNAL_IDENTITY_MODE='pwned'",
-          "HAPPYCLAW_INTERNAL_WATCHER_PID='1'",
-          "HAPPYCLAW_SESSION_ROOT='/'",
-          "HAPPYCLAW_SESSION_PERMISSION_HELPER='/workspace/group/evil.sh'",
+          "MINICLAW_HOST_IDENTITY_MODE='unknown'",
+          "MINICLAW_INTERNAL_IDENTITY_MODE='pwned'",
+          "MINICLAW_INTERNAL_WATCHER_PID='1'",
+          "MINICLAW_SESSION_ROOT='/'",
+          "MINICLAW_SESSION_PERMISSION_HELPER='/workspace/group/evil.sh'",
           "PROJECT_ENV='kept'",
         ].join('\n'),
         { mode: 0o600 },
@@ -787,14 +787,14 @@ describe.skipIf(!integrationImageAvailable)(
       expect(
         runHelper(
           `
-            HAPPYCLAW_HOST_IDENTITY_MODE=direct
-            HAPPYCLAW_INTERNAL_IDENTITY_MODE=direct
-            HAPPYCLAW_INTERNAL_WATCHER_PID=4242
-            happyclaw_source_runtime_env
+            MINICLAW_HOST_IDENTITY_MODE=direct
+            MINICLAW_INTERNAL_IDENTITY_MODE=direct
+            MINICLAW_INTERNAL_WATCHER_PID=4242
+            miniclaw_source_runtime_env
             printf '%s:%s:%s:%s' \
-              "$HAPPYCLAW_HOST_IDENTITY_MODE" \
-              "$HAPPYCLAW_INTERNAL_IDENTITY_MODE" \
-              "$HAPPYCLAW_INTERNAL_WATCHER_PID" \
+              "$MINICLAW_HOST_IDENTITY_MODE" \
+              "$MINICLAW_INTERNAL_IDENTITY_MODE" \
+              "$MINICLAW_INTERNAL_WATCHER_PID" \
               "$PROJECT_ENV"
           `,
           ['-v', `${envDir}:/workspace/env-dir:ro`],
@@ -837,7 +837,7 @@ describe.skipIf(!integrationImageAvailable)(
             node /app/session-permissions-watcher.mjs &
             watcher_pid=$!
             for attempt in $(seq 1 200); do
-              [ -e /run/happyclaw-session-watcher.ready ] && break
+              [ -e /run/miniclaw-session-watcher.ready ] && break
               kill -0 "$watcher_pid"
               sleep 0.02
             done
@@ -854,7 +854,7 @@ describe.skipIf(!integrationImageAvailable)(
             printf '%s:%s:%s' \
               "$(stat -c '%u:%g:%a' "$outside")" \
               "$(cat "$outside")" \
-              "$([ -e /run/happyclaw-session-watcher.failed ] && echo failed || echo safe)"
+              "$([ -e /run/miniclaw-session-watcher.failed ] && echo failed || echo safe)"
           `),
       ).toBe('12345:12345:640:outside-canary:safe');
     }, 30_000);
@@ -866,7 +866,7 @@ describe.skipIf(!integrationImageAvailable)(
             node /app/session-permissions-watcher.mjs &
             watcher_pid=$!
             for attempt in $(seq 1 200); do
-              [ -e /run/happyclaw-session-watcher.ready ] && break
+              [ -e /run/miniclaw-session-watcher.ready ] && break
               kill -0 "$watcher_pid"
               sleep 0.02
             done

@@ -127,7 +127,7 @@ function enable(opts: {
 }
 
 beforeEach(() => {
-  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'happyclaw-r14-'));
+  tmpDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'miniclaw-r14-'));
   _resetCommandIndexCacheForTests();
 });
 

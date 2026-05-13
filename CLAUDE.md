@@ -103,7 +103,7 @@ Radix UI。路由以 `web/src/App.tsx` 为准：
 - stdout 使用 `OUTPUT_START_MARKER` / `OUTPUT_END_MARKER` 输出结构化结果。
 - 后续消息、工具请求和关闭控制通过独立 IPC 目录传递。
 - `container/agent-runner/prompts/` 中的 Prompt 在启动时加载。
-- HappyClaw MCP 工具由 `container/agent-runner/src/mcp-tools.ts` 注册。
+- Miniclaw MCP 工具由 `container/agent-runner/src/mcp-tools.ts` 注册。
 - `shared/stream-event.ts` 同步到主服务、Web 和 Runner。
 
 不要在文档中维护固定的 MCP 工具数量或 StreamEvent 数量；它们会随能力演进变化，
@@ -284,7 +284,7 @@ Web 持久设置 > 环境变量 > 代码默认值
 | --------------------------- | --------------------------------- | --------------------------------- |
 | `WEB_PORT`                  | `3000`                            | HTTP、WebSocket 端口              |
 | `WEB_SESSION_SECRET`        | 自动生成并持久化                  | Cookie 签名                       |
-| `CONTAINER_IMAGE`           | `riba2534/happyclaw-agent:latest` | GitHub Actions 发布的 Runner 镜像 |
+| `CONTAINER_IMAGE`           | `helsome/miniclaw-agent:latest` | GitHub Actions 发布的 Runner 镜像 |
 | `CONTAINER_TIMEOUT`         | `1800000`                         | 默认运行超时                      |
 | `IDLE_TIMEOUT`              | `1800000`                         | 暖 Runner 空闲时间                |
 | `MAX_CONCURRENT_CONTAINERS` | `20`                              | Docker 并发                       |

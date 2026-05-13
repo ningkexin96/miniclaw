@@ -601,7 +601,7 @@ export const WorkspaceMemoryVersionsQuerySchema = z
   })
   .strict();
 
-export const HappyClawOwnerProfileMutationSchema = z.discriminatedUnion(
+export const MiniclawOwnerProfileMutationSchema = z.discriminatedUnion(
   'action',
   [
     z

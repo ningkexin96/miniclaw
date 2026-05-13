@@ -89,7 +89,7 @@ describe('AgentProfile DB model', () => {
     );
   });
 
-  test('persists admin HappyClaw as managed; global host policy is resolved at runtime', () => {
+  test('persists admin Miniclaw as managed; global host policy is resolved at runtime', () => {
     const userId = 'agent-profile-admin-context';
     seedUser(userId, 'admin');
 
@@ -172,19 +172,19 @@ describe('AgentProfile DB model', () => {
     expect(listAgentProfilesForUser(userId)[0].name).toBe(custom?.name);
   });
 
-  test('migrates the pre-rename HappyClaw default name to Miniclaw', () => {
+  test('keeps the current Miniclaw default name stable', () => {
     const userId = 'agent-profile-user-pre-rename';
     seedUser(userId);
     const original = listAgentProfilesForUser(userId)[0];
 
     const legacy = updateAgentProfile(original.id, userId, {
-      name: 'HappyClaw',
+      name: 'Miniclaw',
     });
-    expect(legacy?.name).toBe('HappyClaw');
+    expect(legacy?.name).toBe('Miniclaw');
 
     const migrated = listAgentProfilesForUser(userId)[0];
     expect(migrated.name).toBe('Miniclaw');
-    expect(migrated.version).toBe((legacy?.version ?? 0) + 1);
+    expect(migrated.version).toBe(legacy?.version);
   });
 
   test('ignores retired provider, model and tool policies when normalizing', () => {
@@ -239,7 +239,7 @@ describe('AgentProfile DB model', () => {
     );
   });
 
-  test('permanently binds Home Workspace to the built-in HappyClaw', () => {
+  test('permanently binds Home Workspace to the built-in Miniclaw', () => {
     const userId = 'agent-profile-home-owner';
     seedUser(userId);
     const homeJid = ensureUserHomeGroup(userId, 'member', userId);

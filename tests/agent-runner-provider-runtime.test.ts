@@ -6,7 +6,7 @@ describe('agent-runner provider model contract', () => {
   test.each([
     {
       name: 'official without model uses the SDK default',
-      env: { HAPPYCLAW_CLAUDE_ENDPOINT_KIND: 'official' },
+      env: { MINICLAW_CLAUDE_ENDPOINT_KIND: 'official' },
       missingRequiredModel: false,
       queryModelOptions: {},
       usageModelKey: 'default',
@@ -14,7 +14,7 @@ describe('agent-runner provider model contract', () => {
     {
       name: 'official with model passes the selected model',
       env: {
-        HAPPYCLAW_CLAUDE_ENDPOINT_KIND: 'official',
+        MINICLAW_CLAUDE_ENDPOINT_KIND: 'official',
         ANTHROPIC_MODEL: 'sonnet',
       },
       missingRequiredModel: false,
@@ -23,7 +23,7 @@ describe('agent-runner provider model contract', () => {
     },
     {
       name: 'custom endpoint without model fails fast',
-      env: { HAPPYCLAW_CLAUDE_ENDPOINT_KIND: 'custom' },
+      env: { MINICLAW_CLAUDE_ENDPOINT_KIND: 'custom' },
       missingRequiredModel: true,
       queryModelOptions: {},
       usageModelKey: 'default',
@@ -31,7 +31,7 @@ describe('agent-runner provider model contract', () => {
     {
       name: 'custom endpoint with model passes the selected model',
       env: {
-        HAPPYCLAW_CLAUDE_ENDPOINT_KIND: 'custom',
+        MINICLAW_CLAUDE_ENDPOINT_KIND: 'custom',
         ANTHROPIC_MODEL: 'glm-5.2',
       },
       missingRequiredModel: false,
@@ -51,7 +51,7 @@ describe('agent-runner provider model contract', () => {
 
   test('authoritative official marker ignores an inherited stale base URL', () => {
     const runtime = resolveClaudeProviderRuntime({
-      HAPPYCLAW_CLAUDE_ENDPOINT_KIND: 'official',
+      MINICLAW_CLAUDE_ENDPOINT_KIND: 'official',
       ANTHROPIC_BASE_URL: 'https://stale-proxy.test',
     });
 

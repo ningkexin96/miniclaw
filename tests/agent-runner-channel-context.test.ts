@@ -119,7 +119,7 @@ describe('Agent Runner channel turn context', () => {
   test('creates a compact host-verified per-turn prompt block', () => {
     const prompt = formatChannelTurnContextForPrompt(feishuContext());
     expect(prompt).toContain(
-      '<channel_context source="happyclaw_host" trust="verified">',
+      '<channel_context source="miniclaw_host" trust="verified">',
     );
     expect(prompt).toContain('"threadId":"omt_thread"');
     expect(prompt).toContain('"openId":"ou_sender"');

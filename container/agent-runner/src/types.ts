@@ -184,7 +184,7 @@ export function formatChannelTurnContextForPrompt(
 ): string {
   if (!context) return '';
   return [
-    '<channel_context source="happyclaw_host" trust="verified">',
+    '<channel_context source="miniclaw_host" trust="verified">',
     JSON.stringify(context),
     '</channel_context>',
     'Use this context for the current input only. Never guess IDs or credentials that are absent.',
@@ -248,12 +248,12 @@ export interface ContainerInput {
    * True only for an interactive turn in the built-in Miniclaw Home
    * Workspace before the owner-preferred-address memory has been established.
    */
-  happyClawBootstrapPending?: boolean;
+  miniclawBootstrapPending?: boolean;
   /**
    * Initial host-authoritative projection for the actual owner turn. A
    * dedicated IPC read refreshes this before every cold/warm model turn.
    */
-  happyClawOwnerProfile?: {
+  miniclawOwnerProfile?: {
     workspaceJid: string;
     preferredAddress: string | null;
     revision: number | null;
@@ -267,7 +267,7 @@ export interface ContainerInput {
   };
   /** Structural capability; the host re-authorizes the actual sender on every
    * cold/warm Owner Profile IPC request. */
-  happyClawOwnerProfileEnabled?: boolean;
+  miniclawOwnerProfileEnabled?: boolean;
   /** Host-derived capability flag. True only for an interactive session whose
    * effective top-level AgentProfile is the built-in main Miniclaw. */
   agentBuilderEnabled?: boolean;

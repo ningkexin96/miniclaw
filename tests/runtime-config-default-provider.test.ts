@@ -36,9 +36,9 @@ describe('default model configuration', () => {
   test('strips root-side permission controls from saved Workspace env', () => {
     runtimeConfig.saveContainerEnvConfig('permission-env-workspace', {
       customEnv: {
-        HAPPYCLAW_INTERNAL_IDENTITY_MODE: 'direct',
-        HAPPYCLAW_PASSWD_FILE: '/workspace/group/passwd',
-        HAPPYCLAW_SESSION_PERMISSION_HELPER: '/workspace/group/evil.sh',
+        MINICLAW_INTERNAL_IDENTITY_MODE: 'direct',
+        MINICLAW_PASSWD_FILE: '/workspace/group/passwd',
+        MINICLAW_SESSION_PERMISSION_HELPER: '/workspace/group/evil.sh',
         PROJECT_ENV: 'kept',
       },
     });

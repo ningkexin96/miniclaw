@@ -265,7 +265,7 @@ export interface ClaudeContextAudit {
   };
   skills: ClaudeContextSkillsAudit;
   mcp?: { manifestHash: string; serverIds: string[] };
-  happyclawPrompt: ClaudeContextPromptAudit;
+  miniclawPrompt: ClaudeContextPromptAudit;
   sdkContextUsage?: ClaudeSdkContextUsageAudit;
   contextBudget?: {
     status: 'unavailable' | 'ok' | 'warning' | 'hard_exceeded';

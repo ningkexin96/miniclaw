@@ -477,7 +477,7 @@ bugReportRoutes.post('/submit', authMiddleware, async (c) => {
             'issue',
             'create',
             '--repo',
-            'riba2534/happyclaw',
+            'helsome/miniclaw',
             '--title',
             title,
             '--body-file',
@@ -525,7 +525,7 @@ bugReportRoutes.post('/submit', authMiddleware, async (c) => {
       ? fullBody.slice(0, maxBodyLen) + '\n\n...(内容过长已截断，请补充完整信息)'
       : fullBody;
 
-  const url = `https://github.com/riba2534/happyclaw/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(truncatedBody)}`;
+  const url = `https://github.com/helsome/miniclaw/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(truncatedBody)}`;
 
   logger.info({ userId: user.id }, 'bug-report: returning pre-filled URL');
   cooldowns.set(user.id, Date.now());

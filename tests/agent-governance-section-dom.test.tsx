@@ -89,14 +89,14 @@ describe('Agent governance isolation UI', () => {
   });
 
   test('shows Home as fixed to Miniclaw and offers no migration control', async () => {
-    const happyClaw = {
+    const miniclaw = {
       ...baseProfile,
-      id: 'happyclaw',
+      id: 'miniclaw',
       name: 'Miniclaw',
       is_default: true,
     };
-    await render(happyClaw, {
-      profile: happyClaw,
+    await render(miniclaw, {
+      profile: miniclaw,
       workspaces: [
         {
           jid: 'web:main',

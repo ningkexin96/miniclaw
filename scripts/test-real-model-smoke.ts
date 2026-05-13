@@ -3,7 +3,7 @@ import '../src/load-env.js';
 import { getClaudeProviderConfig } from '../src/runtime-config.js';
 import { sdkQuery } from '../src/sdk-query.js';
 
-const EXPECTED = 'HAPPYCLAW_REAL_SMOKE_OK_20260721';
+const EXPECTED = 'MINICLAW_REAL_SMOKE_OK_20260721';
 
 async function main(): Promise<void> {
   const config = getClaudeProviderConfig();

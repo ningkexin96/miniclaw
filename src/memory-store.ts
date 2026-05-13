@@ -37,9 +37,9 @@ export type WorkspaceMemorySourceType =
   | 'migration';
 
 /** One durable Home Workspace fact completes Miniclaw's first-wake ritual. */
-export const HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY =
-  'happyclaw.owner.preferred_address';
-const HAPPYCLAW_OWNER_PROFILE_MEMORY_NAMESPACE = 'happyclaw.owner-profile';
+export const MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY =
+  'miniclaw.owner.preferred_address';
+const MINICLAW_OWNER_PROFILE_MEMORY_NAMESPACE = 'miniclaw.owner-profile';
 
 export interface WorkspaceMemoryProvenance {
   sourceType: WorkspaceMemorySourceType;
@@ -180,7 +180,7 @@ function normalizeNullable(value: string | null | undefined): string | null {
 
 function isReservedCanonicalKey(value: string | null | undefined): boolean {
   return (
-    normalizeNullable(value) === HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY
+    normalizeNullable(value) === MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY
   );
 }
 
@@ -335,7 +335,7 @@ function isReservedMemoryItem(item: WorkspaceMemoryItem): boolean {
          WHERE item_id = ? AND canonical_key = ?
          LIMIT 1`,
       )
-      .get(item.id, item.id, HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY),
+      .get(item.id, item.id, MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY),
   );
 }
 
@@ -346,7 +346,7 @@ function markPlatformMemoryItem(itemId: string, at: string): void {
         item_id, namespace, created_at
       ) VALUES (?, ?, ?)`,
     )
-    .run(itemId, HAPPYCLAW_OWNER_PROFILE_MEMORY_NAMESPACE, at);
+    .run(itemId, MINICLAW_OWNER_PROFILE_MEMORY_NAMESPACE, at);
 }
 
 function rejectReservedMemoryItem(item: WorkspaceMemoryItem): void {
@@ -677,17 +677,17 @@ export function createWorkspaceMemorySchema(db: SqliteDatabase): void {
       item_id, namespace, created_at
     )
     SELECT
-      id, 'happyclaw.owner-profile', created_at
+      id, 'miniclaw.owner-profile', created_at
     FROM workspace_memory_items
-    WHERE canonical_key = 'happyclaw.owner.preferred_address';
+    WHERE canonical_key = 'miniclaw.owner.preferred_address';
 
     INSERT OR IGNORE INTO workspace_memory_platform_items (
       item_id, namespace, created_at
     )
     SELECT
-      item_id, 'happyclaw.owner-profile', MIN(created_at)
+      item_id, 'miniclaw.owner-profile', MIN(created_at)
     FROM workspace_memory_versions
-    WHERE canonical_key = 'happyclaw.owner.preferred_address'
+    WHERE canonical_key = 'miniclaw.owner.preferred_address'
     GROUP BY item_id;
   `);
 }
@@ -703,7 +703,7 @@ export function bindWorkspaceMemoryDatabase(db: SqliteDatabase | null): void {
  * be undone by an older active duplicate. Every duplicate is detached from
  * the reserved key with full version/audit/outbox history.
  */
-export function reconcileHappyClawOwnerAddressCanonicalKey(): {
+export function reconcileMiniclawOwnerAddressCanonicalKey(): {
   workspaces: number;
   retiredItems: number;
 } {
@@ -717,7 +717,7 @@ export function reconcileHappyClawOwnerAddressCanonicalKey(): {
          GROUP BY store_id
          HAVING COUNT(*) > 1`,
       )
-      .all(HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY) as Array<{
+      .all(MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY) as Array<{
       store_id: string;
     }>;
     let retiredItems = 0;
@@ -730,7 +730,7 @@ export function reconcileHappyClawOwnerAddressCanonicalKey(): {
         )
         .all(
           duplicate.store_id,
-          HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         ) as MemoryItemRow[];
       const storeRowValue = db
         .prepare(
@@ -763,7 +763,7 @@ export function reconcileHappyClawOwnerAddressCanonicalKey(): {
             store.id,
             loser.id,
             loser.revision,
-            HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+            MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
           );
         if (result.changes !== 1) continue;
         store = bumpStore(store.id, at);
@@ -771,7 +771,7 @@ export function reconcileHappyClawOwnerAddressCanonicalKey(): {
         const context: WorkspaceMemoryMutationContext = {
           actorId: 'schema-v66-owner-profile-reconciliation',
           sourceType: 'migration',
-          sourceId: 'happyclaw.owner.preferred_address',
+          sourceId: 'miniclaw.owner.preferred_address',
           observedAt: at,
         };
         appendVersion(versionItem, 'update', context, at);
@@ -796,7 +796,7 @@ export function reconcileHappyClawOwnerAddressCanonicalKey(): {
  * createWorkspaceMemorySchema is essential: an old database may contain
  * duplicates and would otherwise fail before the migration can repair them.
  */
-export function enforceHappyClawOwnerAddressCanonicalInvariant(): void {
+export function enforceMiniclawOwnerAddressCanonicalInvariant(): void {
   requireDatabase()
     .prepare(
       `DELETE FROM workspace_memory_fts
@@ -808,13 +808,13 @@ export function enforceHappyClawOwnerAddressCanonicalInvariant(): void {
        )`,
     )
     .run(
-      HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
-      HAPPYCLAW_OWNER_PROFILE_MEMORY_NAMESPACE,
+      MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+      MINICLAW_OWNER_PROFILE_MEMORY_NAMESPACE,
     );
   requireDatabase().exec(`
     CREATE UNIQUE INDEX IF NOT EXISTS idx_workspace_memory_owner_address_unique
       ON workspace_memory_items(store_id, canonical_key)
-      WHERE canonical_key = 'happyclaw.owner.preferred_address';
+      WHERE canonical_key = 'miniclaw.owner.preferred_address';
   `);
 }
 
@@ -968,7 +968,7 @@ export interface ReservedWorkspaceMemoryMutationResult {
  * Read the platform-owned Owner Profile item without exposing it through the
  * generic Workspace Memory service.
  */
-export function getHappyClawOwnerAddressMemoryItem(workspaceJid: string): {
+export function getMiniclawOwnerAddressMemoryItem(workspaceJid: string): {
   store: WorkspaceMemoryStore;
   item: WorkspaceMemoryItem | null;
 } {
@@ -984,7 +984,7 @@ export function getHappyClawOwnerAddressMemoryItem(workspaceJid: string): {
          i.id DESC
        LIMIT 1`,
     )
-    .get(store.id, HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY) as
+    .get(store.id, MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY) as
     | MemoryItemRow
     | undefined;
   return { store, item: row ? mapItem(row) : null };
@@ -1047,7 +1047,7 @@ function reservedRequestReplay(
  * to `superseded`; restoring changes it back to `active`. This lets callers
  * use one CAS lineage across set → update → clear → restore.
  */
-export function mutateHappyClawOwnerAddressMemory(input: {
+export function mutateMiniclawOwnerAddressMemory(input: {
   workspaceJid: string;
   preferredAddress?: string;
   clear?: boolean;
@@ -1059,7 +1059,7 @@ export function mutateHappyClawOwnerAddressMemory(input: {
   const db = requireDatabase();
   return db.transaction(() => {
     const { store: initialStore, item: current } =
-      getHappyClawOwnerAddressMemoryItem(input.workspaceJid);
+      getMiniclawOwnerAddressMemoryItem(input.workspaceJid);
     const idempotencyKey = normalizeNullable(input.idempotencyKey);
     const preferredAddress = normalizeNullable(input.preferredAddress);
     if (!input.clear && !preferredAddress) {
@@ -1132,7 +1132,7 @@ export function mutateHappyClawOwnerAddressMemory(input: {
         store.workspaceJid,
         '主人称呼',
         preferredAddress,
-        HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         idempotencyKey,
         normalizeNullable(input.requestHash),
         at,
@@ -1249,7 +1249,7 @@ export function mutateHappyClawOwnerAddressMemory(input: {
         initialStore.id,
         current.id,
         input.expectedRevision,
-        HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       );
     if (result.changes !== 1) {
       const latest = requireItem(initialStore, current.id);
@@ -1688,7 +1688,7 @@ export function listWorkspaceMemoryItems(input: {
   const params: unknown[] = [
     store.id,
     input.status ?? 'active',
-    HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+    MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
   ];
   if (input.kind) {
     clauses.push('i.kind = ?');
@@ -1725,7 +1725,7 @@ export function listRecallableWorkspaceMemoryItems(input: {
   const kindClause = input.kind ? 'AND i.kind = ?' : '';
   const params: unknown[] = [
     store.id,
-    HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+    MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
     now,
     now,
     now,
@@ -1774,7 +1774,7 @@ export function searchWorkspaceMemoryItems(input: {
   const kindClause = input.kind ? 'AND i.kind = ?' : '';
   const params: unknown[] = [
     store.id,
-    HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+    MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
     now,
     now,
     now,

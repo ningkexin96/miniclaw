@@ -5,12 +5,12 @@ import path from 'node:path';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const TEST_ROOT =
-  process.env.HAPPYCLAW_MOUNT_SECURITY_STRICT_TEST_DIR ??
+  process.env.MINICLAW_MOUNT_SECURITY_STRICT_TEST_DIR ??
   (() => {
     const dir = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'happyclaw-mount-security-strict-'),
+      path.join(os.tmpdir(), 'miniclaw-mount-security-strict-'),
     );
-    process.env.HAPPYCLAW_MOUNT_SECURITY_STRICT_TEST_DIR = dir;
+    process.env.MINICLAW_MOUNT_SECURITY_STRICT_TEST_DIR = dir;
     return dir;
   })();
 const allowlistPath = path.join(TEST_ROOT, 'mount-allowlist.json');
@@ -22,7 +22,7 @@ vi.mock('../src/config.js', async (importOriginal) => {
   return {
     ...real,
     MOUNT_ALLOWLIST_PATH: path.join(
-      process.env.HAPPYCLAW_MOUNT_SECURITY_STRICT_TEST_DIR!,
+      process.env.MINICLAW_MOUNT_SECURITY_STRICT_TEST_DIR!,
       'mount-allowlist.json',
     ),
   };

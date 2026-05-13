@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-const DATA_DIR = '/tmp/happyclaw-group-queue-ipc-receipts';
+const DATA_DIR = '/tmp/miniclaw-group-queue-ipc-receipts';
 
 vi.mock('../src/config.js', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
@@ -109,7 +109,7 @@ afterEach(async () => {
 describe('GroupQueue IPC delivery receipts', () => {
   test('restarts a container before switching the injected Feishu Bot', async () => {
     await startRunner({
-      containerName: 'happyclaw-bot-a',
+      containerName: 'miniclaw-bot-a',
       feishuCliAccountId: 'account-a',
     });
 
@@ -136,7 +136,7 @@ describe('GroupQueue IPC delivery receipts', () => {
 
   test('keeps a warm container for the same injected Feishu Bot', async () => {
     await startRunner({
-      containerName: 'happyclaw-bot-a',
+      containerName: 'miniclaw-bot-a',
       feishuCliAccountId: 'account-a',
     });
 
@@ -163,7 +163,7 @@ describe('GroupQueue IPC delivery receipts', () => {
 
   test('restarts a Bot-bound container for an explicitly unbound request', async () => {
     await startRunner({
-      containerName: 'happyclaw-bot-a',
+      containerName: 'miniclaw-bot-a',
       feishuCliAccountId: 'account-a',
     });
 
@@ -192,7 +192,7 @@ describe('GroupQueue IPC delivery receipts', () => {
 
   test('keeps compatibility for internal IPC without an identity constraint', async () => {
     await startRunner({
-      containerName: 'happyclaw-bot-a',
+      containerName: 'miniclaw-bot-a',
       feishuCliAccountId: 'account-a',
     });
 

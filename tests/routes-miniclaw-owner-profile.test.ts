@@ -15,7 +15,7 @@ import {
 } from 'vitest';
 
 const root = fs.mkdtempSync(
-  path.join(os.tmpdir(), 'routes-happyclaw-owner-profile-'),
+  path.join(os.tmpdir(), 'routes-miniclaw-owner-profile-'),
 );
 const storeDir = path.join(root, 'store');
 const groupsDir = path.join(root, 'groups');
@@ -33,13 +33,13 @@ vi.mock('../src/logger.js', () => ({
 }));
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
-    const id = process.env.HAPPYCLAW_OWNER_PROFILE_ROUTE_USER ?? 'route-owner';
+    const id = process.env.MINICLAW_OWNER_PROFILE_ROUTE_USER ?? 'route-owner';
     c.set('user', {
       id,
       username: id,
       display_name: id,
       role:
-        process.env.HAPPYCLAW_OWNER_PROFILE_ROUTE_ROLE === 'admin'
+        process.env.MINICLAW_OWNER_PROFILE_ROUTE_ROLE === 'admin'
           ? 'admin'
           : 'member',
       status: 'active',
@@ -77,8 +77,8 @@ function createUser(id: string, role: 'member' | 'admin' = 'member'): void {
 }
 
 function asUser(id: string, role: 'member' | 'admin' = 'member'): void {
-  process.env.HAPPYCLAW_OWNER_PROFILE_ROUTE_USER = id;
-  process.env.HAPPYCLAW_OWNER_PROFILE_ROUTE_ROLE = role;
+  process.env.MINICLAW_OWNER_PROFILE_ROUTE_USER = id;
+  process.env.MINICLAW_OWNER_PROFILE_ROUTE_ROLE = role;
 }
 
 function requestHash(value: unknown): string {
@@ -148,8 +148,8 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  delete process.env.HAPPYCLAW_OWNER_PROFILE_ROUTE_USER;
-  delete process.env.HAPPYCLAW_OWNER_PROFILE_ROUTE_ROLE;
+  delete process.env.MINICLAW_OWNER_PROFILE_ROUTE_USER;
+  delete process.env.MINICLAW_OWNER_PROFILE_ROUTE_ROLE;
 });
 
 afterAll(() => {
@@ -251,7 +251,7 @@ describe('/api/workspaces/:jid/owner-profile', () => {
       )
       .all(
         homeJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       ) as Array<{ actor_id: string }>;
     expect(actors).toEqual([
       { actor_id: OWNER_ID },
@@ -314,7 +314,7 @@ describe('/api/workspaces/:jid/owner-profile', () => {
     const custom = db.createAgentProfile({
       ownerUserId: OWNER_ID,
       name: 'Custom route profile',
-      identityPrompt: 'Remain isolated from HappyClaw Owner Profile.',
+      identityPrompt: 'Remain isolated from Miniclaw Owner Profile.',
     });
     const customJid = 'web:route-owner-custom-home';
     db.setRegisteredGroup(customJid, {
@@ -352,7 +352,7 @@ describe('/api/workspaces/:jid/owner-profile', () => {
     const genericCreate = await genericMemoryRequest(skipHomeJid, '', 'POST', {
       kind: 'fact',
       content: 'generic create',
-      canonicalKey: memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+      canonicalKey: memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
     });
     expect(genericCreate).toMatchObject({
       status: 400,
@@ -368,7 +368,7 @@ describe('/api/workspaces/:jid/owner-profile', () => {
       )
       .get(
         skipHomeJid,
-        memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+        memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
       ) as { id: string; store_id: string; revision: number };
     const legacyCreateKey = 'route-legacy-generic-create-replay';
     const legacyUpdateKey = 'route-legacy-generic-update-replay';
@@ -397,7 +397,7 @@ describe('/api/workspaces/:jid/owner-profile', () => {
         id: item.id,
         workspaceJid: skipHomeJid,
         canonicalKey:
-          memoryStore.HAPPYCLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
+          memoryStore.MINICLAW_OWNER_PREFERRED_ADDRESS_CANONICAL_KEY,
         content: '专用称呼',
         revision: item.revision,
       },

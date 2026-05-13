@@ -1,5 +1,5 @@
 /*
- * One-way migration for browsers that installed HappyClaw's former Workbox
+ * One-way migration for browsers that installed Miniclaw's former Workbox
  * Service Worker. This script never caches or intercepts requests. An old
  * registration will update to it, delete its caches, unregister itself and
  * reload controlled tabs onto the network-served application.

@@ -16,7 +16,7 @@ RUN     := npx
 RUNNER  := npx tsx src/index.ts
 RUNTIME_DATA_DIR ?= data
 BACKUP_DIR ?= .
-CONTAINER_IMAGE ?= riba2534/happyclaw-agent:latest
+CONTAINER_IMAGE ?= helsome/miniclaw-agent:latest
 export CONTAINER_IMAGE
 
 # ─── Development ─────────────────────────────────────────────
@@ -239,15 +239,20 @@ reset-init: ## 完全重置为首装状态（清空所有运行时数据）
 
 # ─── Backup / Restore ────────────────────────────────────────
 
-backup: ## 备份运行时数据到 happyclaw-backup-{date}.tar.gz
+backup: ## 备份运行时数据到 miniclaw-backup-{date}.tar.gz
 	@set -eu; \
 	DATE=$$(date +%Y%m%d-%H%M%S); \
 	mkdir -p "$(BACKUP_DIR)"; \
-	FILE="$(BACKUP_DIR)/happyclaw-backup-$$DATE.tar.gz"; \
-	if [ -e "$$FILE" ]; then FILE="$(BACKUP_DIR)/happyclaw-backup-$$DATE-$$$$.tar.gz"; fi; \
+	FILE="$(BACKUP_DIR)/miniclaw-backup-$$DATE.tar.gz"; \
+	if [ -e "$$FILE" ]; then FILE="$(BACKUP_DIR)/miniclaw-backup-$$DATE-$$$$.tar.gz"; fi; \
 	TMP_FILE="$$FILE.tmp-$$$$"; \
-	TMP_ROOT=$$(mktemp -d "$${TMPDIR:-/tmp}/happyclaw-backup.XXXXXX"); \
+	TMP_ROOT=$$(mktemp -d "$${TMPDIR:-/tmp}/miniclaw-backup.XXXXXX"); \
 	trap 'rm -rf "$$TMP_ROOT" "$$TMP_FILE"' EXIT INT TERM; \
+	HARDLINK_SOURCE=$$(find "$(RUNTIME_DATA_DIR)" -xdev -type f -links +1 -print -quit 2>/dev/null || true); \
+	if [ -n "$$HARDLINK_SOURCE" ]; then \
+	  echo "❌ 运行时数据包含硬链接文件，tar 会将其存为不完整的链接条目导致备份无法恢复，拒绝创建：$$HARDLINK_SOURCE"; \
+	  exit 1; \
+	fi; \
 	mkdir -p "$$TMP_ROOT/data/db"; \
 	echo "📦 正在创建 SQLite 一致性快照..."; \
 	node scripts/sqlite-snapshot.mjs \
@@ -281,18 +286,18 @@ backup: ## 备份运行时数据到 happyclaw-backup-{date}.tar.gz
 	chmod 600 "$$FILE"; \
 	echo "✅ 备份完成：$$FILE ($$(du -sh "$$FILE" | cut -f1))"
 
-restore: ## 从 happyclaw-backup-*.tar.gz 恢复数据（用法：make restore 或 make restore FILE=xxx.tar.gz）
+restore: ## 从 miniclaw-backup-*.tar.gz 恢复数据（用法：make restore 或 make restore FILE=xxx.tar.gz）
 	@set -eu; \
 	if [ -n "$(FILE)" ]; then \
 	  BACKUP="$(FILE)"; \
-	elif [ $$(find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'happyclaw-backup-*.tar.gz' 2>/dev/null | wc -l) -eq 1 ]; then \
-	  BACKUP=$$(find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'happyclaw-backup-*.tar.gz' | head -1); \
-	elif [ $$(find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'happyclaw-backup-*.tar.gz' 2>/dev/null | wc -l) -gt 1 ]; then \
+	elif [ $$(find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'miniclaw-backup-*.tar.gz' 2>/dev/null | wc -l) -eq 1 ]; then \
+	  BACKUP=$$(find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'miniclaw-backup-*.tar.gz' | head -1); \
+	elif [ $$(find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'miniclaw-backup-*.tar.gz' 2>/dev/null | wc -l) -gt 1 ]; then \
 	  echo "❌ 发现多个备份文件，请用 make restore FILE=xxx.tar.gz 指定："; \
-	  find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'happyclaw-backup-*.tar.gz' -print; \
+	  find "$(BACKUP_DIR)" -maxdepth 1 -type f -name 'miniclaw-backup-*.tar.gz' -print; \
 	  exit 1; \
 	else \
-	  echo "❌ 未找到备份文件，请将 happyclaw-backup-*.tar.gz 放到当前目录"; \
+	  echo "❌ 未找到备份文件，请将 miniclaw-backup-*.tar.gz 放到当前目录"; \
 	  exit 1; \
 	fi; \
 	if [ ! -f "$$BACKUP" ]; then \

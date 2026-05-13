@@ -12,7 +12,7 @@ ARG TOOL_REFRESH=manual
 # Install system packages (organized by category)
 # Debian packages intentionally follow the current signed stable repositories,
 # so a refreshed build receives the newest security and bug-fix packages.
-RUN printf '%s\n' "$TOOL_REFRESH" > /etc/happyclaw-tool-refresh \
+RUN printf '%s\n' "$TOOL_REFRESH" > /etc/miniclaw-tool-refresh \
     && apt-get update && apt-get install -y --no-install-recommends \
     # --- Browser & fonts ---
     chromium \
@@ -104,8 +104,8 @@ ENV LC_ALL=en_US.UTF-8
 # agent-browser attaches to it instead of launching a second browser with a
 # random debugging port.
 ENV AGENT_BROWSER_EXECUTABLE_PATH=/usr/bin/chromium
-ENV HAPPYCLAW_CHROMIUM_CDP_HOST=127.0.0.1
-ENV HAPPYCLAW_CHROMIUM_CDP_PORT=9222
+ENV MINICLAW_CHROMIUM_CDP_HOST=127.0.0.1
+ENV MINICLAW_CHROMIUM_CDP_PORT=9222
 ENV AGENT_BROWSER_CDP=9222
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
@@ -138,7 +138,7 @@ RUN npm ci \
 #   { "command": "headroom", "args": ["mcp", "serve"] }
 # 只选 [code,mcp] 两个 extras: [memory] 通过 sentence-transformers 强依赖
 # torch + CUDA (cudnn-cu12, cublas, cusparse, cusolver, nccl, triton...),
-# 压缩包就 ~2.45GB, 解包 3-6GB 量级. HappyClaw 容器无 GPU, 也不需要语义
+# 压缩包就 ~2.45GB, 解包 3-6GB 量级. Miniclaw 容器无 GPU, 也不需要语义
 # embedding 类 retrieve. 用户如真需要 headroom 的 memory 能力, 可在容器内
 # 单独 `pip install --index-url https://download.pytorch.org/whl/cpu torch`
 # 再 `pip install "headroom-ai[memory]"` 走 CPU 路径. PIP_BREAK_SYSTEM_PACKAGES
@@ -238,7 +238,7 @@ RUN set -eu; \
 
 # Keep an in-image audit record of every dynamically resolved tool version.
 # This can be inspected without relying on transient GitHub Actions logs:
-#   cat /usr/local/share/happyclaw-tool-versions.txt
+#   cat /usr/local/share/miniclaw-tool-versions.txt
 RUN set -eu; \
     { \
       printf 'tool_refresh=%s\n' "$TOOL_REFRESH"; \
@@ -250,8 +250,8 @@ RUN set -eu; \
       printf 'headroom=%s\n' "$(python3 -c "from importlib.metadata import version; print(version('headroom-ai'))")"; \
       printf 'chromium=%s\n' "$(chromium --version | awk '{print $2}')"; \
       printf 'oh-my-zsh=%s\n' "$(cat /usr/local/share/oh-my-zsh-version)"; \
-    } > /usr/local/share/happyclaw-tool-versions.txt; \
-    cat /usr/local/share/happyclaw-tool-versions.txt
+    } > /usr/local/share/miniclaw-tool-versions.txt; \
+    cat /usr/local/share/miniclaw-tool-versions.txt
 
 # Entrypoint runs as root to fix volume permissions, then drops to node user.
 # Do NOT add USER node here — entrypoint handles the privilege drop.

@@ -1600,7 +1600,7 @@ export class GroupQueue {
     // be silently consumed (or confusingly processed) by the task agent and the
     // reply would never reach the user.  Returning 'no_active' causes the
     // caller to enqueue a fresh message-processing run that will execute once
-    // the task finishes.  See GitHub issue riba2534/happyclaw#151.
+    // the task finishes.  See GitHub issue helsome/miniclaw#151.
     //
     // Exception: conversation agent tasks (virtual JIDs with #agent:) are
     // user-message handlers started via enqueueTask.  They DO accept IPC

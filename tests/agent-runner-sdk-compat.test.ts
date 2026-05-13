@@ -1,13 +1,13 @@
 import { describe, expect, test } from 'vitest';
 
 import {
-  HAPPYCLAW_SUBAGENT_RUNTIME_CONTRACT,
-  withHappyClawSubagentContract,
+  MINICLAW_SUBAGENT_RUNTIME_CONTRACT,
+  withMiniclawSubagentContract,
 } from '../container/agent-runner/src/sdk-compat.js';
 
 describe('Claude SDK compatibility adapter', () => {
   test('adds only the short subagent contract and required CLI feature flag', () => {
-    const result = withHappyClawSubagentContract(
+    const result = withMiniclawSubagentContract(
       {
         systemPrompt: 'MAIN_MARKER',
         skills: ['review'],
@@ -18,7 +18,7 @@ describe('Claude SDK compatibility adapter', () => {
 
     expect(result.options.systemPrompt).toBe('MAIN_MARKER');
     expect(result.options.appendSubagentSystemPrompt).toBe(
-      HAPPYCLAW_SUBAGENT_RUNTIME_CONTRACT,
+      MINICLAW_SUBAGENT_RUNTIME_CONTRACT,
     );
     expect(result.options.appendSubagentSystemPrompt).not.toContain(
       'MAIN_MARKER',

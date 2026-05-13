@@ -26,12 +26,12 @@ import {
 } from 'vitest';
 
 const SHARED_TMP =
-  process.env.HAPPYCLAW_TEST_DATA_DIR ??
+  process.env.MINICLAW_TEST_DATA_DIR ??
   (() => {
     const d = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'happyclaw-routes-workspace-config-'),
+      path.join(os.tmpdir(), 'miniclaw-routes-workspace-config-'),
     );
-    process.env.HAPPYCLAW_TEST_DATA_DIR = d;
+    process.env.MINICLAW_TEST_DATA_DIR = d;
     return d;
   })();
 
@@ -39,7 +39,7 @@ let tmpDataDir = SHARED_TMP;
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
-  const dataDir = process.env.HAPPYCLAW_TEST_DATA_DIR!;
+  const dataDir = process.env.MINICLAW_TEST_DATA_DIR!;
   return {
     ...real,
     DATA_DIR: dataDir,
@@ -60,9 +60,9 @@ vi.mock('../src/logger.js', () => ({
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
     c.set('user', {
-      id: process.env.HAPPYCLAW_TEST_USER_ID ?? 'alice',
+      id: process.env.MINICLAW_TEST_USER_ID ?? 'alice',
       username: 'alice',
-      role: process.env.HAPPYCLAW_TEST_USER_ROLE ?? 'member',
+      role: process.env.MINICLAW_TEST_USER_ROLE ?? 'member',
       permissions: [],
     });
     return next();
@@ -93,8 +93,8 @@ function seedTestGroup(): void {
 }
 
 function asUser(userId: string, role: 'admin' | 'member' = 'member'): void {
-  process.env.HAPPYCLAW_TEST_USER_ID = userId;
-  process.env.HAPPYCLAW_TEST_USER_ROLE = role;
+  process.env.MINICLAW_TEST_USER_ID = userId;
+  process.env.MINICLAW_TEST_USER_ROLE = role;
 }
 
 beforeAll(() => {
@@ -121,8 +121,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  delete process.env.HAPPYCLAW_TEST_USER_ID;
-  delete process.env.HAPPYCLAW_TEST_USER_ROLE;
+  delete process.env.MINICLAW_TEST_USER_ID;
+  delete process.env.MINICLAW_TEST_USER_ROLE;
 });
 
 async function postMcp(body: unknown): Promise<{ status: number; body: any }> {

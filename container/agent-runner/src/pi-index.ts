@@ -23,15 +23,15 @@ import {
   type IpcInputMessage,
 } from './ipc-delivery.js';
 import {
-  acknowledgeHappyClawOwnerProfileFirstWake,
+  acknowledgeMiniclawOwnerProfileFirstWake,
   createMcpTools,
-  fetchHappyClawOwnerProfileTurn,
+  fetchMiniclawOwnerProfileTurn,
   fetchWorkspaceMemorySnapshot,
   type McpContext,
 } from './mcp-tools.js';
-import { loadHappyClawOwnerProfileTurnContext } from './owner-profile-context.js';
+import { loadMiniclawOwnerProfileTurnContext } from './owner-profile-context.js';
 import { loadWorkspaceMemoryTurnContext } from './workspace-memory-context.js';
-import { buildHappyClawPromptPlan } from './prompt-plan.js';
+import { buildMiniclawPromptPlan } from './prompt-plan.js';
 import { resolveClaudeProviderRuntime } from './provider-runtime.js';
 import { resolveAgentRuntimeKind } from './runtime-config.js';
 import { adaptClaudeMcpToolsToPi } from './runtime/pi/pi-tools.js';
@@ -40,18 +40,17 @@ import { runPiQueryAttempt } from './runtime/pi/pi-runner.js';
 
 const WORKSPACE_GROUP =
   process.env.MINICLAW_WORKSPACE_GROUP ||
-  process.env.HAPPYCLAW_WORKSPACE_GROUP ||
   '/workspace/group';
 const WORKSPACE_IPC =
   process.env.MINICLAW_WORKSPACE_IPC ||
-  process.env.HAPPYCLAW_WORKSPACE_IPC ||
+  process.env.MINICLAW_WORKSPACE_IPC ||
   '/workspace/ipc';
 const INPUT_DIR = path.join(WORKSPACE_IPC, 'input');
 const CLOSE_SENTINEL = path.join(INPUT_DIR, '_close');
 const INTERRUPT_SENTINEL = path.join(INPUT_DIR, '_interrupt');
 const DRAIN_SENTINEL = path.join(INPUT_DIR, '_drain');
-const OUTPUT_START = '---HAPPYCLAW_OUTPUT_START---';
-const OUTPUT_END = '---HAPPYCLAW_OUTPUT_END---';
+const OUTPUT_START = '---MINICLAW_OUTPUT_START---';
+const OUTPUT_END = '---MINICLAW_OUTPUT_END---';
 const DEFAULT_ALLOWED_TOOLS = [
   'Bash',
   'Read',
@@ -64,7 +63,7 @@ const DEFAULT_ALLOWED_TOOLS = [
   'Task',
   'TaskOutput',
   'TaskStop',
-  'mcp__happyclaw__*',
+  'mcp__miniclaw__*',
 ];
 const PROMPTS_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -247,13 +246,13 @@ function buildSystemPrompt(input: ContainerInput, ctx: McpContext): string {
     ? loadPrompt(`channels/${channel}.md`)
     : undefined;
   const identity = input.agentProfile?.identityPrompt?.trim();
-  const plan = buildHappyClawPromptPlan({
+  const plan = buildMiniclawPromptPlan({
     platformIdentity: input.agentProfile?.isDefault
-      ? loadPrompt('identity.happyclaw.md')
+      ? loadPrompt('identity.miniclaw.md')
       : undefined,
     platformBootstrap:
-      input.agentProfile?.isDefault && input.happyClawOwnerProfileEnabled
-        ? loadPrompt('bootstrap.happyclaw.md')
+      input.agentProfile?.isDefault && input.miniclawOwnerProfileEnabled
+        ? loadPrompt('bootstrap.miniclaw.md')
         : undefined,
     agentIdentity: identity
       ? `<agent-identity profile_id="${input.agentProfile?.id}"><profile-prompt>${identity}</profile-prompt></agent-identity>`
@@ -308,8 +307,8 @@ async function runTurn(
     loadWorkspaceMemoryTurnContext(prompt, (query) =>
       fetchWorkspaceMemorySnapshot(ctx, query),
     ),
-    loadHappyClawOwnerProfileTurnContext(() =>
-      fetchHappyClawOwnerProfileTurn(ctx),
+    loadMiniclawOwnerProfileTurnContext(() =>
+      fetchMiniclawOwnerProfileTurn(ctx),
     ),
   ]);
   if (!memory.snapshot)
@@ -326,7 +325,7 @@ async function runTurn(
     .join('\n\n');
   const tracker = new IpcTurnDeliveryTracker(initialMessages);
   const customTools = adaptClaudeMcpToolsToPi(createMcpTools(ctx), {
-    namespace: 'mcp__happyclaw',
+    namespace: 'mcp__miniclaw',
   });
   const provider = resolveClaudeProviderRuntime(process.env);
   const runtime = new PiRuntimeAdapter();
@@ -380,7 +379,7 @@ async function runTurn(
           Number.isInteger(leaseToken) &&
           leaseToken > 0
         ) {
-          void acknowledgeHappyClawOwnerProfileFirstWake(
+          void acknowledgeMiniclawOwnerProfileFirstWake(
             ctx,
             leaseToken,
             activeInputTurnId || input.turnId || generateTurnId(),
@@ -452,7 +451,7 @@ async function main(): Promise<void> {
     isHome: input.isHome ?? input.isMain ?? false,
     isAdminHome: input.isAdminHome ?? input.isMain ?? false,
     agentBuilderEnabled: input.agentBuilderEnabled ?? false,
-    ownerProfileEnabled: input.happyClawOwnerProfileEnabled === true,
+    ownerProfileEnabled: input.miniclawOwnerProfileEnabled === true,
     interactionMode: input.interactionMode ?? 'assistant',
     isScheduledTask: input.isScheduledTask === true,
     currentTaskId: input.messageTaskId ?? null,

@@ -5,12 +5,12 @@ import path from 'node:path';
 import { afterAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const TEST_ROOT =
-  process.env.HAPPYCLAW_MCP_RUNTIME_TEST_ROOT ??
+  process.env.MINICLAW_MCP_RUNTIME_TEST_ROOT ??
   (() => {
     const root = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'happyclaw-mcp-runtime-boundary-'),
+      path.join(os.tmpdir(), 'miniclaw-mcp-runtime-boundary-'),
     );
-    process.env.HAPPYCLAW_MCP_RUNTIME_TEST_ROOT = root;
+    process.env.MINICLAW_MCP_RUNTIME_TEST_ROOT = root;
     return root;
   })();
 
@@ -18,13 +18,13 @@ const ownerRoles = vi.hoisted(() => new Map<string, 'admin' | 'member'>());
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = await importOriginal<typeof import('../src/config.js')>();
-  const root = process.env.HAPPYCLAW_MCP_RUNTIME_TEST_ROOT!;
+  const root = process.env.MINICLAW_MCP_RUNTIME_TEST_ROOT!;
   return {
     ...real,
     DATA_DIR: root,
     GROUPS_DIR: path.join(root, 'groups'),
     STORE_DIR: path.join(root, 'db'),
-    CONTAINER_IMAGE: 'happyclaw-agent:test',
+    CONTAINER_IMAGE: 'miniclaw-agent:test',
     TIMEZONE: 'UTC',
     MAIN_GROUP_FOLDER: 'main',
   };
@@ -166,7 +166,7 @@ beforeEach(() => {
 
 afterAll(() => {
   fs.rmSync(TEST_ROOT, { recursive: true, force: true });
-  delete process.env.HAPPYCLAW_MCP_RUNTIME_TEST_ROOT;
+  delete process.env.MINICLAW_MCP_RUNTIME_TEST_ROOT;
 });
 
 describe('managed MCP runtime secret boundary', () => {

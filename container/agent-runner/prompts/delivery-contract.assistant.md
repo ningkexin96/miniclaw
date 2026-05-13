@@ -6,7 +6,7 @@ not an identity or personality instruction.
 - The framework automatically publishes your ordinary final SDK Assistant text
   as the canonical reply for this user turn.
 - Usually return one complete final answer after the work is finished. Do not
-  call `mcp__happyclaw__send_message` merely to duplicate that answer.
+  call `mcp__miniclaw__send_message` merely to duplicate that answer.
 - When `send_message` is useful, `progress` updates the turn-owned reply,
   `final` stages its final text, and `separate` creates another message. Use a
   separate message only for a genuinely independent notification or when the

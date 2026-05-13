@@ -46,7 +46,7 @@ describe('Feishu rich inbound normalization', () => {
       },
       body: {
         elements: [
-          { tag: 'markdown', content: '**服务**: HappyClaw\n环境: production' },
+          { tag: 'markdown', content: '**服务**: Miniclaw\n环境: production' },
           {
             tag: 'button',
             text: { tag: 'plain_text', content: '查看详情' },
@@ -59,7 +59,7 @@ describe('Feishu rich inbound normalization', () => {
 
     const result = normalizeFeishuInteractiveCard(card);
     expect(result.text).toContain('发布审批');
-    expect(result.text).toContain('**服务**: HappyClaw');
+    expect(result.text).toContain('**服务**: Miniclaw');
     expect(result.text).toContain('[查看详情](https://example.com/runs/42)');
     expect(result.text).toContain('[图片]');
     expect(result.imageKeys).toEqual(['img_v3_card_42']);

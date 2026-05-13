@@ -5,18 +5,18 @@ import path from 'node:path';
 import { beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const SHARED_TMP =
-  process.env.HAPPYCLAW_HOST_MOUNT_ROUTE_TEST_DIR ??
+  process.env.MINICLAW_HOST_MOUNT_ROUTE_TEST_DIR ??
   (() => {
     const dir = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'happyclaw-host-mount-route-'),
+      path.join(os.tmpdir(), 'miniclaw-host-mount-route-'),
     );
-    process.env.HAPPYCLAW_HOST_MOUNT_ROUTE_TEST_DIR = dir;
+    process.env.MINICLAW_HOST_MOUNT_ROUTE_TEST_DIR = dir;
     return dir;
   })();
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;
-  const root = process.env.HAPPYCLAW_HOST_MOUNT_ROUTE_TEST_DIR!;
+  const root = process.env.MINICLAW_HOST_MOUNT_ROUTE_TEST_DIR!;
   return {
     ...real,
     DATA_DIR: path.join(root, 'data'),
@@ -38,10 +38,10 @@ vi.mock('../src/logger.js', () => ({
 vi.mock('../src/middleware/auth.ts', () => ({
   authMiddleware: async (c: any, next: any) => {
     c.set('user', {
-      id: process.env.HAPPYCLAW_TEST_USER_ID ?? 'route-admin',
-      username: process.env.HAPPYCLAW_TEST_USER_ID ?? 'route-admin',
-      role: process.env.HAPPYCLAW_TEST_USER_ROLE ?? 'admin',
-      status: process.env.HAPPYCLAW_TEST_USER_STATUS ?? 'active',
+      id: process.env.MINICLAW_TEST_USER_ID ?? 'route-admin',
+      username: process.env.MINICLAW_TEST_USER_ID ?? 'route-admin',
+      role: process.env.MINICLAW_TEST_USER_ROLE ?? 'admin',
+      status: process.env.MINICLAW_TEST_USER_STATUS ?? 'active',
       permissions: [],
     });
     return next();
@@ -67,9 +67,9 @@ function asUser(
   role: 'admin' | 'member',
   status: 'active' | 'disabled' = 'active',
 ): void {
-  process.env.HAPPYCLAW_TEST_USER_ID = id;
-  process.env.HAPPYCLAW_TEST_USER_ROLE = role;
-  process.env.HAPPYCLAW_TEST_USER_STATUS = status;
+  process.env.MINICLAW_TEST_USER_ID = id;
+  process.env.MINICLAW_TEST_USER_ROLE = role;
+  process.env.MINICLAW_TEST_USER_STATUS = status;
 }
 
 function uniqueName(label: string): string {

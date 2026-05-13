@@ -1,27 +1,27 @@
 import { describe, expect, test } from 'vitest';
 
 import {
-  isHappyClawBootstrapTurn,
-  isHappyClawOwnerProfileRuntimeStructurallyEligible,
-} from '../src/happyclaw-bootstrap.js';
+  isMiniclawBootstrapTurn,
+  isMiniclawOwnerProfileRuntimeStructurallyEligible,
+} from '../src/miniclaw-bootstrap.js';
 
-describe('HappyClaw first-wake eligibility', () => {
+describe('Miniclaw first-wake eligibility', () => {
   test('allows only a real interactive Home turn of the built-in profile', () => {
     expect(
-      isHappyClawBootstrapTurn({
+      isMiniclawBootstrapTurn({
         turnId: 'owner-turn',
         isHome: true,
         isDefaultProfile: true,
       }),
     ).toBe(true);
     expect(
-      isHappyClawBootstrapTurn({
+      isMiniclawBootstrapTurn({
         isHome: true,
         isDefaultProfile: true,
       }),
     ).toBe(false);
     expect(
-      isHappyClawBootstrapTurn({
+      isMiniclawBootstrapTurn({
         turnId: 'scheduled-turn',
         isHome: true,
         isDefaultProfile: true,
@@ -29,14 +29,14 @@ describe('HappyClaw first-wake eligibility', () => {
       }),
     ).toBe(false);
     expect(
-      isHappyClawBootstrapTurn({
+      isMiniclawBootstrapTurn({
         turnId: 'custom-turn',
         isHome: true,
         isDefaultProfile: false,
       }),
     ).toBe(false);
     expect(
-      isHappyClawBootstrapTurn({
+      isMiniclawBootstrapTurn({
         turnId: 'project-turn',
         isHome: false,
         isDefaultProfile: true,
@@ -45,31 +45,31 @@ describe('HappyClaw first-wake eligibility', () => {
   });
 });
 
-describe('HappyClaw Owner Profile structural runtime eligibility', () => {
+describe('Miniclaw Owner Profile structural runtime eligibility', () => {
   test('keeps capability across terminal warmup but denies unsafe runtime kinds', () => {
     const warmup = {
       isHome: true,
       isDefaultProfile: true,
     };
-    expect(isHappyClawOwnerProfileRuntimeStructurallyEligible(warmup)).toBe(
+    expect(isMiniclawOwnerProfileRuntimeStructurallyEligible(warmup)).toBe(
       true,
     );
     expect(
-      isHappyClawOwnerProfileRuntimeStructurallyEligible({
+      isMiniclawOwnerProfileRuntimeStructurallyEligible({
         ...warmup,
         runtimeAgentId: 'conversation-1',
         runtimeAgentKind: 'conversation',
       }),
     ).toBe(true);
     expect(
-      isHappyClawOwnerProfileRuntimeStructurallyEligible({
+      isMiniclawOwnerProfileRuntimeStructurallyEligible({
         ...warmup,
         isScheduledTask: true,
       }),
     ).toBe(false);
     for (const runtimeAgentKind of ['task', 'spawn'] as const) {
       expect(
-        isHappyClawOwnerProfileRuntimeStructurallyEligible({
+        isMiniclawOwnerProfileRuntimeStructurallyEligible({
           ...warmup,
           runtimeAgentId: `${runtimeAgentKind}-1`,
           runtimeAgentKind,
@@ -77,13 +77,13 @@ describe('HappyClaw Owner Profile structural runtime eligibility', () => {
       ).toBe(false);
     }
     expect(
-      isHappyClawOwnerProfileRuntimeStructurallyEligible({
+      isMiniclawOwnerProfileRuntimeStructurallyEligible({
         ...warmup,
         isHome: false,
       }),
     ).toBe(false);
     expect(
-      isHappyClawOwnerProfileRuntimeStructurallyEligible({
+      isMiniclawOwnerProfileRuntimeStructurallyEligible({
         ...warmup,
         isDefaultProfile: false,
       }),

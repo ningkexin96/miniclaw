@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 'happyclaw:task-run-idempotency:';
+const STORAGE_PREFIX = 'miniclaw:task-run-idempotency:';
 const PENDING_KEY_TTL_MS = 24 * 60 * 60 * 1000;
 
 interface PendingRunKey {

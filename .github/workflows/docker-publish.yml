@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  IMAGE_NAME: riba2534/happyclaw-agent
+  IMAGE_NAME: helsome/miniclaw-agent
 
 jobs:
   build-and-smoke:
@@ -57,13 +57,13 @@ jobs:
           build-args: |
             TOOL_REFRESH=${{ github.sha }}
           outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha,scope=happyclaw-agent-${{ matrix.arch }}
-          cache-to: type=gha,mode=max,scope=happyclaw-agent-${{ matrix.arch }}
+          cache-from: type=gha,scope=miniclaw-agent-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=miniclaw-agent-${{ matrix.arch }}
           sbom: true
           provenance: mode=max
           labels: |
-            org.opencontainers.image.title=HappyClaw Agent
-            org.opencontainers.image.description=Isolated multi-platform agent runtime for HappyClaw
+            org.opencontainers.image.title=Miniclaw Agent
+            org.opencontainers.image.description=Isolated multi-platform agent runtime for Miniclaw
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
 
@@ -78,14 +78,14 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$IMAGE_DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
-          mkdir -p /tmp/happyclaw-digests
-          touch "/tmp/happyclaw-digests/${IMAGE_DIGEST#sha256:}"
+          mkdir -p /tmp/miniclaw-digests
+          touch "/tmp/miniclaw-digests/${IMAGE_DIGEST#sha256:}"
 
       - name: Upload verified digest
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: digests-${{ matrix.arch }}
-          path: /tmp/happyclaw-digests/*
+          path: /tmp/miniclaw-digests/*
           if-no-files-found: error
           retention-days: 1
 
@@ -111,7 +111,7 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: digests-*
-          path: /tmp/happyclaw-digests
+          path: /tmp/miniclaw-digests
           merge-multiple: true
 
       - name: Install Cosign
@@ -121,7 +121,7 @@ jobs:
         id: manifest
         run: |
           set -euo pipefail
-          mapfile -t digest_files < <(find /tmp/happyclaw-digests -maxdepth 1 -type f -printf '%f\n' | sort)
+          mapfile -t digest_files < <(find /tmp/miniclaw-digests -maxdepth 1 -type f -printf '%f\n' | sort)
           if [ "${#digest_files[@]}" -ne 2 ]; then
             echo "Expected two verified platform digests, found ${#digest_files[@]}" >&2
             exit 1

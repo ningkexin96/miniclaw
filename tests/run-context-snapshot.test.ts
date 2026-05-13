@@ -60,7 +60,7 @@ describe('run context explainability snapshot', () => {
           ],
         },
         mcp: { manifestHash: 'mcp-a', serverIds: ['search'] },
-        happyclawPrompt: {
+        miniclawPrompt: {
           totalBytes: 800,
           estimatedTokens: 200,
           planHash: 'plan-hash',
@@ -150,7 +150,7 @@ describe('run context explainability snapshot', () => {
       claudeMd: { status: 'missing' as const },
       rules: { status: 'missing' as const, fileCount: 0 },
       skills: { sources: [] },
-      happyclawPrompt: { totalBytes: 0, files: [] },
+      miniclawPrompt: { totalBytes: 0, files: [] },
       warnings: [],
     };
     recordRunContextSnapshot({ chatJid: 'web:a', audit: baseAudit });
@@ -187,7 +187,7 @@ describe('run context explainability snapshot', () => {
           sources: [],
         },
         mcp: { manifestHash: 'mcp-manifest-a', serverIds: ['mcp-a'] },
-        happyclawPrompt: { totalBytes: 0, files: [] },
+        miniclawPrompt: { totalBytes: 0, files: [] },
         warnings: [],
       },
     });

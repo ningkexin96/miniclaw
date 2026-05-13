@@ -1,5 +1,5 @@
 /**
- * Regression test for riba2534/happyclaw#559 ("notify 失效").
+ * Regression test for helsome/miniclaw#559 ("notify 失效").
  *
  * Group-mode scheduled tasks inject their prompt into the source workspace as a
  * normal message. When a runner is ALREADY active, delivery goes through
@@ -16,7 +16,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 
-const TEST_DATA_DIR = '/tmp/happyclaw-queue-taskid-test';
+const TEST_DATA_DIR = '/tmp/miniclaw-queue-taskid-test';
 
 vi.mock('../src/config.js', async (importOriginal) => {
   const real = (await importOriginal()) as Record<string, unknown>;

@@ -12,7 +12,7 @@
 
 import WebSocket from 'ws';
 
-const BASE = process.env.HAPPYCLAW_URL || 'http://localhost:3000';
+const BASE = process.env.MINICLAW_URL || 'http://localhost:3000';
 const WS_URL = BASE.replace(/^http/, 'ws') + '/ws';
 const USERNAME = process.argv[2];
 const PASSWORD = process.argv[3];

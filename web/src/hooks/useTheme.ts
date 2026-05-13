@@ -7,9 +7,9 @@ export type FontStyle = 'default' | 'anthropic';
 const THEME_KEY = 'miniclaw-theme';
 const SCHEME_KEY = 'miniclaw-color-scheme';
 const FONT_KEY = 'miniclaw-font-style';
-const LEGACY_THEME_KEY = 'happyclaw-theme';
-const LEGACY_SCHEME_KEY = 'happyclaw-color-scheme';
-const LEGACY_FONT_KEY = 'happyclaw-font-style';
+const LEGACY_THEME_KEY = 'miniclaw-theme';
+const LEGACY_SCHEME_KEY = 'miniclaw-color-scheme';
+const LEGACY_FONT_KEY = 'miniclaw-font-style';
 const listeners = new Set<() => void>();
 
 function notify() { listeners.forEach((cb) => cb()); }

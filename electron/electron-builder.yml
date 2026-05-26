@@ -2,12 +2,14 @@ appId: cc.miniclaw.desktop
 productName: Miniclaw
 copyright: Copyright © 2026 Miniclaw contributors
 electronVersion: 39.8.10
+icon: assets/miniclaw-icon.png
 
 directories:
   output: release
 
 files:
   - dist/**/*
+  - assets/**/*
   - package.json
   - '!**/*.map'
 
@@ -18,6 +20,7 @@ asar: true
 
 mac:
   category: public.app-category.productivity
+  icon: assets/miniclaw.icns
   target:
     - dmg
     - zip

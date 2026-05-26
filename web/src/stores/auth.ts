@@ -48,6 +48,7 @@ export interface SetupStatus {
   needsSetup: boolean;
   claudeConfigured: boolean;
   feishuConfigured: boolean;
+  providerSetupSkipped: boolean;
 }
 
 interface AuthState {

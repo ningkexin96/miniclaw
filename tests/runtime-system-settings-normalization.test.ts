@@ -36,11 +36,14 @@ describe('system settings normalization', () => {
     expect(fromEnv.containerTimeout).toBe(60_000);
     expect(fromEnv.maxConcurrentContainers).toBe(100);
     expect(fromEnv.adminHostOnlyMode).toBe(true);
+    expect(fromEnv.providerSetupSkipped).toBe(false);
 
     const saved = runtime.saveSystemSettings({
       mainAgentAutoCompactPercentage: 95,
+      providerSetupSkipped: true,
     } as any);
     expect(saved.mainAgentAutoCompactPercentage).toBe(90);
+    expect(saved.providerSetupSkipped).toBe(true);
 
     const settingsFile = path.join(tmpDir, 'config', 'system-settings.json');
     fs.writeFileSync(

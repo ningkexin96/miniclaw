@@ -3953,6 +3953,8 @@ export interface SystemSettings {
   // false = 关闭定时扫描，admin 仍可手点 POST /api/plugins/catalog/scan。
   // 适用于不希望本机私有 plugin 自动入共享 catalog 的环境。
   pluginAutoScan: boolean;
+  // 管理员可以先进入后台，稍后再配置 Claude Provider。
+  providerSetupSkipped: boolean;
 }
 
 // Upper bound for the login lockout window. auth.ts reclaims login-attempt
@@ -3982,6 +3984,7 @@ const DEFAULT_SYSTEM_SETTINGS: SystemSettings = {
   mainAgentAutoCompactPercentage: 0,
   fallbackModel: '',
   pluginAutoScan: true,
+  providerSetupSkipped: false,
 };
 
 type SystemSettingsSource = 'file' | 'env' | 'api';
@@ -4194,6 +4197,10 @@ function normalizeSystemSettings(
     pluginAutoScan: booleanField(
       'pluginAutoScan',
       DEFAULT_SYSTEM_SETTINGS.pluginAutoScan,
+    ),
+    providerSetupSkipped: booleanField(
+      'providerSetupSkipped',
+      DEFAULT_SYSTEM_SETTINGS.providerSetupSkipped,
     ),
   };
 

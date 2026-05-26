@@ -204,6 +204,7 @@ function createMainWindow(): BrowserWindow {
     show: false,
     title: APP_NAME,
     backgroundColor: '#101114',
+    icon: path.join(__dirname, '..', 'assets', 'miniclaw-icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '..', 'dist', 'preload.cjs'),
       contextIsolation: true,

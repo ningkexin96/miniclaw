@@ -2220,6 +2220,7 @@ function toSystemSettingsResponse(
     maxLoginAttempts: settings.maxLoginAttempts,
     loginLockoutMinutes: settings.loginLockoutMinutes,
     fallbackModel: settings.fallbackModel,
+    providerSetupSkipped: settings.providerSetupSkipped,
   };
 }
 

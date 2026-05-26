@@ -120,11 +120,13 @@ function buildSetupStatus() {
   });
   const { source: feishuSource } = getFeishuProviderConfigWithSource();
   const feishuConfigured = feishuSource !== 'none';
+  const providerSetupSkipped = getSystemSettings().providerSetupSkipped;
 
   return {
-    needsSetup: !claudeConfigured,
+    needsSetup: !claudeConfigured && !providerSetupSkipped,
     claudeConfigured,
     feishuConfigured,
+    providerSetupSkipped,
   };
 }
 

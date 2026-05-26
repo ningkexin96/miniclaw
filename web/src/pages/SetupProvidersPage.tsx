@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ExternalLink, KeyRound, Loader2, Link2, Plus, Server, ShieldCheck, X } from 'lucide-react';
+import { ArrowRight, ExternalLink, KeyRound, Loader2, Link2, Plus, Server, ShieldCheck, SkipForward, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { Input } from '@/components/ui/input';
@@ -256,13 +256,28 @@ export function SetupProvidersPage() {
     }
   };
 
+  const handleSkip = async () => {
+    setError(null);
+    setNotice(null);
+    setSaving(true);
+    try {
+      await api.put('/api/config/system', { providerSetupSkipped: true });
+      await checkAuth();
+      navigate('/chat', { replace: true });
+    } catch (err) {
+      setError(getErrorMessage(err, '暂时跳过初始化失败'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="h-screen bg-background overflow-y-auto p-4">
       <div className="w-full max-w-4xl mx-auto space-y-5">
         <div className="text-center">
           <p className="text-xs font-semibold text-primary tracking-wider mb-2">STEP 2 / 2</p>
           <h1 className="text-2xl font-bold text-foreground mb-2">系统接入初始化</h1>
-          <p className="text-sm text-muted-foreground">此页面保存的是系统全局默认配置。完成后才进入正式后台。</p>
+          <p className="text-sm text-muted-foreground">此页面保存的是系统全局默认配置。你也可以先跳过，稍后在设置中完成。</p>
         </div>
 
         {error && (
@@ -574,13 +589,19 @@ export function SetupProvidersPage() {
         <div className="bg-card rounded-xl border border-border shadow-sm p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div className="text-sm text-muted-foreground flex items-start gap-2">
             <ShieldCheck className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-            当前页保存的数据会作为系统全局默认配置，后续可在后台设置页继续修改。
+            <span>当前页保存的数据会作为系统全局默认配置，后续可在后台设置页继续修改。</span>
           </div>
-          <Button onClick={handleFinish} disabled={saving} className="min-w-64">
-            {saving && <Loader2 className="size-4 animate-spin" />}
-            保存全局默认并进入后台
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          <div className="flex items-center justify-end gap-2 shrink-0">
+            <Button variant="ghost" onClick={handleSkip} disabled={saving}>
+              <SkipForward className="size-4" />
+              稍后设置
+            </Button>
+            <Button onClick={handleFinish} disabled={saving} className="min-w-52">
+              {saving && <Loader2 className="size-4 animate-spin" />}
+              保存并进入后台
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

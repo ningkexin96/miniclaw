@@ -36,23 +36,24 @@ verify_sha256() {
   fi
 }
 
-# Detect platform
+# Detect platform (informational only; OS/ARCH validation is done where
+# platform-specific binaries are actually installed, i.e. install_feishu_cli).
 OS="$(uname -s)"
 ARCH="$(uname -m)"
-case "$ARCH" in
-  x86_64)  ARCH_GO="amd64" ;;
-  aarch64|arm64) ARCH_GO="arm64" ;;
-  *) warn "Unsupported architecture: $ARCH"; exit 1 ;;
-esac
-case "$OS" in
-  Darwin) OS_GO="Darwin" ;;
-  Linux)  OS_GO="linux" ;;
-  *) warn "Unsupported OS: $OS"; exit 1 ;;
-esac
 
 # ── feishu-cli ───────────────────────────────────────────────
 
 install_feishu_cli() {
+  case "$ARCH" in
+    x86_64)  ARCH_GO="amd64" ;;
+    aarch64|arm64) ARCH_GO="arm64" ;;
+    *) warn "Unsupported architecture: $ARCH"; exit 1 ;;
+  esac
+  case "$OS" in
+    Darwin) OS_GO="Darwin" ;;
+    Linux)  OS_GO="linux" ;;
+    *) warn "Unsupported OS: $OS"; exit 1 ;;
+  esac
   CURRENT_VERSION="$(feishu-cli --version 2>/dev/null || true)"
   if has_cmd feishu-cli && [[ "$CURRENT_VERSION" == *"$FEISHU_CLI_VERSION"* || "$CURRENT_VERSION" == *"${FEISHU_CLI_VERSION#v}"* ]]; then
     skip "feishu-cli already installed ($CURRENT_VERSION)"
@@ -76,7 +77,7 @@ refresh_builtin_skills() {
   mkdir -p "$DATA_DIR"
   STAGING=$(mktemp -d "$DATA_DIR/.builtin-skills-staging.XXXXXX")
   PREVIOUS="$DATA_DIR/.builtin-skills-previous.$$"
-  trap 'rm -rf "$TMP" "$STAGING" "$PREVIOUS"' RETURN
+  trap 'rm -rf "$TMP" "$STAGING" "$PREVIOUS"' EXIT
   curl -fsSL \
     -o "$TMP/feishu-cli-source.tar.gz" \
     "https://github.com/riba2534/feishu-cli/archive/refs/tags/${VERSION}.tar.gz"

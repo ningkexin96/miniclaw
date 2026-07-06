@@ -82,7 +82,11 @@ refresh_builtin_skills() {
     -o "$TMP/feishu-cli-source.tar.gz" \
     "https://github.com/riba2534/feishu-cli/archive/refs/tags/${VERSION}.tar.gz"
   verify_sha256 "$FEISHU_CLI_SOURCE_SHA256" "$TMP/feishu-cli-source.tar.gz"
-  tar -xzf "$TMP/feishu-cli-source.tar.gz" -C "$TMP"
+  # Extract only the skills/ subtree. The source tarball contains a top-level
+  # symlink (AGENTS.md -> CLAUDE.md) that Windows cannot create without
+  # Developer Mode; skills/ is the only thing this cache needs.
+  TOP_DIR="feishu-cli-${VERSION#v}"
+  tar -xzf "$TMP/feishu-cli-source.tar.gz" -C "$TMP" "$TOP_DIR/skills"
 
   cp -r "$TMP"/*/skills/. "$STAGING"/
   node "$PROJECT_ROOT/scripts/builtin-skill-catalog.mjs" write "$STAGING"

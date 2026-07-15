@@ -212,3 +212,22 @@ export function scanSkillDirectory(
 
   return skills;
 }
+
+// --- Cross-platform directory links ---
+
+/**
+ * Create a directory symlink that works without elevation on every platform.
+ *
+ * Windows only permits a real directory symlink when Developer Mode is enabled
+ * or the process is elevated. A directory junction needs neither, and Node
+ * still reports it as a symlink from `lstat`/`readdir`, so existing
+ * link-detection logic keeps working. Junctions require an absolute local
+ * target, hence the resolve on Windows. POSIX ignores the type argument.
+ */
+export function linkDirectory(target: string, linkPath: string): void {
+  if (process.platform === 'win32') {
+    fs.symlinkSync(path.resolve(target), linkPath, 'junction');
+    return;
+  }
+  fs.symlinkSync(target, linkPath, 'dir');
+}

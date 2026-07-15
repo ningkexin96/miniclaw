@@ -2,7 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { scanSkillDirectory } from './skill-utils.js';
+import { scanSkillDirectory, linkDirectory } from './skill-utils.js';
 
 export type EffectiveSkillSource =
   | 'builtin'
@@ -322,7 +322,7 @@ export function reconcileSessionSkills(
         // Plugin definitions are loaded by options.plugins and only contribute
         // their qualified id to the SDK skills selector.
         if (skill.source === 'plugin') continue;
-        fs.symlinkSync(skill.path, path.join(staging, skill.id));
+        linkDirectory(skill.path, path.join(staging, skill.id));
       }
     }
     if (fs.existsSync(skillsDir)) fs.renameSync(skillsDir, previous);

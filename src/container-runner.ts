@@ -93,7 +93,11 @@ import type {
   ChannelTurnContext,
   InteractionMode,
 } from './types.js';
-import { validateSkillId, validateSkillPath } from './skill-utils.js';
+import {
+  validateSkillId,
+  validateSkillPath,
+  linkDirectory,
+} from './skill-utils.js';
 import type { ClaudeContextAudit } from './stream-event.types.js';
 import {
   resolveHostSkillPolicy,
@@ -667,7 +671,7 @@ function resolveAgentProfileUserSkillsPolicy(
     fs.mkdirSync(stagingRoot, { recursive: true });
     try {
       for (const { id, source } of selectedSkills) {
-        fs.symlinkSync(source, path.join(stagingRoot, id));
+        linkDirectory(source, path.join(stagingRoot, id));
       }
       fs.mkdirSync(path.dirname(runtimeRoot), { recursive: true });
       try {

@@ -134,6 +134,8 @@ export type RuntimeSessionOptions = {
     endpointKind?: 'official' | 'custom';
     baseUrl?: string;
     apiKey?: string;
+    /** Raw `ANTHROPIC_CUSTOM_HEADERS` value (one `Name: value` pair per line). */
+    customHeaders?: string;
   };
   /**
    * Product auto-compact toggle (default true). Maps to the runtime-native

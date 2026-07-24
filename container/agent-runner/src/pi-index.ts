@@ -351,6 +351,7 @@ async function runTurn(
         baseUrl: process.env.ANTHROPIC_BASE_URL,
         apiKey:
           process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN,
+        customHeaders: process.env.ANTHROPIC_CUSTOM_HEADERS,
       },
       skillPaths: [
         path.join(process.env.CLAUDE_CONFIG_DIR || '', 'skills'),

@@ -20,6 +20,30 @@ function splitModelRef(value: string): { providerId: string; modelId: string } {
 }
 
 /**
+ * Parse the Claude-Code style `ANTHROPIC_CUSTOM_HEADERS` env value into the
+ * header map Pi attaches to every request. The value is one `Name: value` pair
+ * per line; malformed lines are skipped rather than failing the whole run.
+ * Gateways that route by an extra header (for example OpenCode Zen's
+ * `x-opencode-session`) depend on this.
+ */
+export function parseCustomHeaders(
+  raw: string | undefined,
+): Record<string, string> | undefined {
+  if (!raw?.trim()) return undefined;
+  const headers: Record<string, string> = {};
+  for (const line of raw.split('\n')) {
+    const entry = line.trim();
+    if (!entry) continue;
+    const separator = entry.indexOf(':');
+    if (separator <= 0) continue;
+    const name = entry.slice(0, separator).trim();
+    const value = entry.slice(separator + 1).trim();
+    if (name && value) headers[name] = value;
+  }
+  return Object.keys(headers).length > 0 ? headers : undefined;
+}
+
+/**
  * Bridge the existing Miniclaw provider env contract to Pi ModelRuntime.
  * Custom Anthropic-compatible endpoints are registered as a separate provider
  * so Pi's built-in Anthropic catalog and credentials remain untouched.
@@ -31,6 +55,7 @@ export async function resolvePiProvider(
     endpointKind?: 'official' | 'custom';
     baseUrl?: string;
     apiKey?: string;
+    customHeaders?: string;
   },
 ): Promise<PiProviderResolution> {
   const rawModel = input.model?.trim() || '';
@@ -63,11 +88,13 @@ export async function resolvePiProvider(
     if (!rawModel) {
       throw new Error('Pi custom provider requires ANTHROPIC_MODEL');
     }
+    const customHeaders = parseCustomHeaders(input.customHeaders);
     modelRuntime.registerProvider(providerId, {
       name: `Miniclaw ${split.providerId} compatible provider`,
       baseUrl: input.baseUrl.trim(),
       api: 'anthropic-messages',
       ...(input.apiKey?.trim() ? { apiKey: input.apiKey.trim() } : {}),
+      ...(customHeaders ? { headers: customHeaders } : {}),
       models: [
         {
           id: split.modelId,

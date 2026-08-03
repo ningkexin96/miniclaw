@@ -916,6 +916,19 @@ pre code.hljs {
   }
 }
 
+/* Keep the capsule inside the viewport on narrow phones now that the nav has
+   six items: 6 × 46px + gaps + padding fits a 320px-wide screen. */
+@media (max-width: 360px) {
+  .floating-nav {
+    gap: 0;
+    padding: 6px;
+  }
+
+  .floating-nav-item {
+    width: 46px;
+  }
+}
+
 @supports (padding: env(safe-area-inset-bottom)) {
   .floating-nav-container {
     bottom: max(24px, env(safe-area-inset-bottom));

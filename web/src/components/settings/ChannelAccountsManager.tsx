@@ -851,6 +851,10 @@ function AccountConnectionDialog({
               <h3 className="mb-3 text-sm font-medium">扫码与连接状态</h3>
               <QrOnboardingPanel account={account} autoStart={autoStart} />
             </div>
+            {supportsChannelPairing(account.provider) &&
+              account.has_credentials && (
+                <AccountPairingSection account={account} />
+              )}
           </div>
         ) : (
           <div className="space-y-5">

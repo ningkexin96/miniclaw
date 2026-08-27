@@ -17306,7 +17306,7 @@ async function startMessageLoop(): Promise<void> {
           // already active this IPC path (not the cold-start runContainerAgent
           // path) handles delivery, so it must carry task_id too — otherwise the
           // task's send_message output loses task attribution and the host skips
-          // the notify_channels broadcast (helsome/miniclaw#559).
+          // the notify_channels broadcast (ningkexin96/miniclaw#559).
           const injectionTaskId = extractLastTaskId(messagesToSend);
 
           const sendResult = queue.sendMessage(

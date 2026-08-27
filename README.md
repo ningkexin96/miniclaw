@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/helsome/miniclaw">GitHub</a> ·
+  <a href="https://github.com/ningkexin96/miniclaw">GitHub</a> ·
   <a href="docs/API.md">API</a> ·
   <a href="docs/ACL-MATRIX.md">权限模型</a> ·
   <a href="SECURITY.md">安全策略</a>
@@ -145,7 +145,7 @@ Web Client / Electron Desktop / Message Channels
 ### 启动 Backend 与 Web Client
 
 ```bash
-git clone https://github.com/helsome/miniclaw.git
+git clone https://github.com/ningkexin96/miniclaw.git
 cd miniclaw
 
 npm install
@@ -169,7 +169,7 @@ npm run dev:all
 
 首次进入时完成管理员初始化和 Provider 配置即可。Provider/渠道接入步骤现在可以选择“稍后设置”，跳过后仍可进入工作台，之后在设置中补齐模型和渠道配置。
 
-Agent 容器镜像默认使用 `helsome/miniclaw-agent:latest`，可以通过 `MINICLAW_CONTAINER_IMAGE` 或 `CONTAINER_IMAGE` 覆盖。
+Agent 容器镜像默认使用 `ningkexin96/miniclaw-agent:latest`，可以通过 `MINICLAW_CONTAINER_IMAGE` 或 `CONTAINER_IMAGE` 覆盖。
 
 ### 启动 Electron Desktop
 
@@ -233,7 +233,7 @@ npm run desktop:package
 | --- | --- | --- |
 | `MINICLAW_SERVER_URL` | Electron 要连接的 Backend 地址 | `http://127.0.0.1:3000` |
 | `MINICLAW_RENDERER_URL` | Electron 要加载的 Renderer 地址，适合本地 Vite 开发 | 与 Server URL 相同 |
-| `MINICLAW_CONTAINER_IMAGE` | Agent Runner 使用的容器镜像 | `helsome/miniclaw-agent:latest` |
+| `MINICLAW_CONTAINER_IMAGE` | Agent Runner 使用的容器镜像 | `ningkexin96/miniclaw-agent:latest` |
 | `CONTAINER_IMAGE` | 容器镜像的兼容覆盖项 | 同上 |
 | `WEB_PORT` | Makefile 启动 Backend 使用的端口 | `3000` |
 

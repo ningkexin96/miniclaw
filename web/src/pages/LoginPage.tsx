@@ -167,7 +167,7 @@ export function LoginPage() {
         </div>
         <div className="flex items-center gap-2">
           <a
-            href="https://github.com/helsome/miniclaw"
+            href="https://github.com/ningkexin96/miniclaw"
             target="_blank"
             rel="noopener noreferrer"
           >

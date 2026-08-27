@@ -306,7 +306,7 @@ describe('entrypoint permission contract', () => {
 
 const integrationImage =
   process.env.MINICLAW_CONTAINER_PERMISSION_TEST_IMAGE ??
-  'helsome/miniclaw-agent:latest';
+  'ningkexin96/miniclaw-agent:latest';
 let integrationImageAvailable = false;
 try {
   execFileSync('docker', ['image', 'inspect', integrationImage], {

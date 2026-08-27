@@ -1,6 +1,6 @@
 # Miniclaw 品牌清理记录
 
-本文记录 Miniclaw 独立品牌清理时发现的旧项目引用、处理范围和有意保留的第三方引用。除本记录的审计词表外，公开项目身份统一使用 Miniclaw 与 `https://github.com/helsome/miniclaw`。
+本文记录 Miniclaw 独立品牌清理时发现的旧项目引用、处理范围和有意保留的第三方引用。除本记录的审计词表外，公开项目身份统一使用 Miniclaw 与 `https://github.com/ningkexin96/miniclaw`。
 
 ## 清理规则
 

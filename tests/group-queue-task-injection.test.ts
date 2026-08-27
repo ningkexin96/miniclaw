@@ -1,5 +1,5 @@
 /**
- * Regression test for helsome/miniclaw#559 ("notify 失效").
+ * Regression test for ningkexin96/miniclaw#559 ("notify 失效").
  *
  * Group-mode scheduled tasks inject their prompt into the source workspace as a
  * normal message. When a runner is ALREADY active, delivery goes through

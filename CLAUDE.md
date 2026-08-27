@@ -284,7 +284,7 @@ Web 持久设置 > 环境变量 > 代码默认值
 | --------------------------- | --------------------------------- | --------------------------------- |
 | `WEB_PORT`                  | `3000`                            | HTTP、WebSocket 端口              |
 | `WEB_SESSION_SECRET`        | 自动生成并持久化                  | Cookie 签名                       |
-| `CONTAINER_IMAGE`           | `helsome/miniclaw-agent:latest` | GitHub Actions 发布的 Runner 镜像 |
+| `CONTAINER_IMAGE`           | `ningkexin96/miniclaw-agent:latest` | GitHub Actions 发布的 Runner 镜像 |
 | `CONTAINER_TIMEOUT`         | `1800000`                         | 默认运行超时                      |
 | `IDLE_TIMEOUT`              | `1800000`                         | 暖 Runner 空闲时间                |
 | `MAX_CONCURRENT_CONTAINERS` | `20`                              | Docker 并发                       |

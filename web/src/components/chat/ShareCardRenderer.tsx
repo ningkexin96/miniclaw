@@ -194,7 +194,7 @@ export const ShareCardRenderer = forwardRef<HTMLDivElement, ShareCardRendererPro
             style={{ width: 16, height: 16, borderRadius: 3 }}
           />
           <span style={{ fontSize: 12, color: '#94a3b8' }}>
-            Miniclaw · github.com/helsome/miniclaw
+            Miniclaw · github.com/ningkexin96/miniclaw
           </span>
         </div>
       </div>

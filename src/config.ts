@@ -47,7 +47,7 @@ export const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const CONTAINER_IMAGE = envWithLegacyAlias(
   'MINICLAW_CONTAINER_IMAGE',
   'CONTAINER_IMAGE',
-  'helsome/miniclaw-agent:latest',
+  'ningkexin96/miniclaw-agent:latest',
 );
 // Timezone for scheduled tasks (cron expressions, etc.)
 // Uses TZ env var with Asia/Shanghai fallback

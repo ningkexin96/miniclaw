@@ -33,18 +33,18 @@ export function AboutSection() {
         <div className="flex items-center gap-3">
           <Github className="w-4 h-4 text-muted-foreground shrink-0" />
           <a
-            href="https://github.com/helsome/miniclaw"
+            href="https://github.com/ningkexin96/miniclaw"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-primary hover:text-primary/80 inline-flex items-center gap-1"
           >
-            helsome/miniclaw
+            ningkexin96/miniclaw
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
         <div className="flex items-center gap-3">
           <Code2 className="w-4 h-4 text-muted-foreground shrink-0" />
-          <span className="text-sm text-foreground">作者：helson</span>
+          <span className="text-sm text-foreground">作者：ningkexin96</span>
         </div>
         <div className="flex items-center gap-3">
           <Bug className="w-4 h-4 text-muted-foreground shrink-0" />

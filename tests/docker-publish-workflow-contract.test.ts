@@ -63,11 +63,11 @@ describe('Docker image distribution contract', () => {
 
   test('builds only in GitHub Actions and pulls published images at runtime', () => {
     expect(read('src/config.ts')).toContain(
-      "'helsome/miniclaw-agent:latest'",
+      "'ningkexin96/miniclaw-agent:latest'",
     );
     const makefile = read('Makefile');
     expect(makefile).toContain(
-      'CONTAINER_IMAGE ?= helsome/miniclaw-agent:latest',
+      'CONTAINER_IMAGE ?= ningkexin96/miniclaw-agent:latest',
     );
     expect(makefile).toContain('docker-pull:');
     expect(makefile).toContain('docker pull "$(CONTAINER_IMAGE)"');

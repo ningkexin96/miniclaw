@@ -26,14 +26,14 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/helsome/miniclaw.git",
+    "url": "git+https://github.com/ningkexin96/miniclaw.git",
     "directory": "container/agent-runner"
   },
-  "homepage": "https://github.com/helsome/miniclaw#readme",
+  "homepage": "https://github.com/ningkexin96/miniclaw#readme",
   "bugs": {
-    "url": "https://github.com/helsome/miniclaw/issues"
+    "url": "https://github.com/ningkexin96/miniclaw/issues"
   },
-  "author": "helson",
+  "author": "ningkexin96",
   "keywords": [
     "agent-runner",
     "mcp",

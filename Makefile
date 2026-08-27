@@ -16,7 +16,7 @@ RUN     := npx
 RUNNER  := npx tsx src/index.ts
 RUNTIME_DATA_DIR ?= data
 BACKUP_DIR ?= .
-CONTAINER_IMAGE ?= helsome/miniclaw-agent:latest
+CONTAINER_IMAGE ?= ningkexin96/miniclaw-agent:latest
 export CONTAINER_IMAGE
 
 # ─── Development ─────────────────────────────────────────────

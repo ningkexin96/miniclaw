@@ -29,13 +29,17 @@ describe('Feishu route safety integration', () => {
     // that must precede its own registration, dropping every message
     // forever. See channel-admission.ts's "pairing establishes ownership
     // before routing" contract.
-    const bootstrapIdx = source.indexOf(
-      "chatType === 'p2p' &&\n        resolveEffectiveChatJid &&\n        !resolveEffectiveChatJid(chatJid)",
-    );
+    //
+    // The configured resolver reports "no route" by throwing
+    // ChannelRouteRejectedError (im-manager's scopeConnectOpts), so the
+    // bootstrap probe must tolerate that rejection instead of letting it
+    // abort registration.
+    const bootstrapIdx = source.indexOf('!hasResolvableRoute');
     const routeCheckIdx = source.indexOf(
       'resolveAdmittedChannelRoute<FeishuMessageMeta>',
     );
 
+    expect(source).toContain('err instanceof ChannelRouteRejectedError');
     expect(bootstrapIdx).toBeGreaterThan(-1);
     expect(routeCheckIdx).toBeGreaterThan(-1);
     expect(bootstrapIdx).toBeLessThan(routeCheckIdx);

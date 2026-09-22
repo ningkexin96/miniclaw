@@ -35,7 +35,10 @@ import {
   stripLeadingBotMention,
   type MentionGateMention,
 } from './feishu-mention-gate.js';
-import { resolveAdmittedChannelRoute } from './channel-admission.js';
+import {
+  ChannelRouteRejectedError,
+  resolveAdmittedChannelRoute,
+} from './channel-admission.js';
 import {
   extractProviderTarget,
   parseChannelAddress,
@@ -85,7 +88,7 @@ export interface FeishuConnectionConfig {
   channelAccountId?: string;
 }
 
-/** 飞书文件信息（用于下载到工作区） */
+/** 飞书文件信息（用于下载到店铺） */
 interface FeishuFileInfo {
   fileKey: string;
   filename: string;
@@ -108,9 +111,9 @@ export interface ConnectOptions {
     senderImId?: string,
     mentions?: FeishuMentionLike[],
   ) => Promise<string | null>;
-  /** 根据 chatJid 解析群组 folder，用于下载文件/图片到工作区 */
+  /** 根据 chatJid 解析群组 folder，用于下载文件/图片到店铺 */
   resolveGroupFolder?: (chatJid: string) => string | undefined;
-  /** 将 IM chatJid 解析为绑定目标 JID（conversation agent 或工作区主对话） */
+  /** 将 IM chatJid 解析为绑定目标 JID（conversation agent 或店铺主对话） */
   resolveEffectiveChatJid?: (
     chatJid: string,
     messageMeta?: FeishuMessageMeta,
@@ -1547,8 +1550,8 @@ export function createFeishuConnection(
   }
 
   /**
-   * 下载飞书文件（type='file'）到工作区磁盘。
-   * 返回工作区相对路径（如 downloads/feishu/2026-03-01/report.pdf），失败返回 null。
+   * 下载飞书文件（type='file'）到店铺磁盘。
+   * 返回店铺相对路径（如 downloads/feishu/2026-03-01/report.pdf），失败返回 null。
    */
   async function downloadFeishuFileToDisk(
     messageId: string,
@@ -2332,10 +2335,24 @@ export function createFeishuConnection(
       // onNewChat/onP2pSender are idempotent no-ops once already
       // registered, so calling them again in their normal position below
       // is safe and keeps this bootstrap narrowly scoped to P2P.
+      //
+      // The configured resolver fails closed by throwing
+      // ChannelRouteRejectedError (see im-manager's scopeConnectOpts) rather
+      // than returning null, so the probe below tolerates that rejection: an
+      // unresolvable (or paused) route is exactly the brand-new P2P case this
+      // bootstrap exists for.
+      let hasResolvableRoute = false;
+      if (resolveEffectiveChatJid) {
+        try {
+          hasResolvableRoute = !!resolveEffectiveChatJid(chatJid);
+        } catch (err) {
+          if (!(err instanceof ChannelRouteRejectedError)) throw err;
+        }
+      }
       if (
         chatType === 'p2p' &&
         resolveEffectiveChatJid &&
-        !resolveEffectiveChatJid(chatJid)
+        !hasResolvableRoute
       ) {
         onNewChat?.(chatJid, resolvedChatName);
         if (senderOpenId && onP2pSender) {
@@ -2343,26 +2360,36 @@ export function createFeishuConnection(
         }
       }
 
-      const admittedRoute = resolveAdmittedChannelRoute<FeishuMessageMeta>(
-        chatJid,
-        resolveEffectiveChatJid,
-        {
-          provider: 'feishu',
-          chatType: normalizedChatType,
-          mentionedBot,
-          nativeContextType:
-            conversationPlan?.independentContext ||
-            (!conversationPlan && !!threadId)
-              ? 'thread'
-              : undefined,
-          contextId: conversationPlan?.contextId || threadId,
-          threadId,
-          rootId: conversationPlan?.rootMessageId || rootId,
-          parentId,
-          messageId,
-          text,
-        },
-      );
+      const admittedRoute = (() => {
+        try {
+          return resolveAdmittedChannelRoute<FeishuMessageMeta>(
+            chatJid,
+            resolveEffectiveChatJid,
+            {
+              provider: 'feishu',
+              chatType: normalizedChatType,
+              mentionedBot,
+              nativeContextType:
+                conversationPlan?.independentContext ||
+                (!conversationPlan && !!threadId)
+                  ? 'thread'
+                  : undefined,
+              contextId: conversationPlan?.contextId || threadId,
+              threadId,
+              rootId: conversationPlan?.rootMessageId || rootId,
+              parentId,
+              messageId,
+              text,
+            },
+          );
+        } catch (err) {
+          // "No route" is reported by throwing here. Take the same terminal
+          // path as an explicit null result instead of converting it into an
+          // unbounded durable-Inbox retry loop.
+          if (!(err instanceof ChannelRouteRejectedError)) throw err;
+          return null;
+        }
+      })();
       if (!admittedRoute) {
         logger.warn(
           { chatJid, messageId, source },
@@ -2459,7 +2486,7 @@ export function createFeishuConnection(
       if (currentImageRefs.length > 0 || referencedImageRefs.length > 0) {
         // 图片消息：下载后双轨处理
         // 1. Vision 通道：base64 附件供模型看图
-        // 2. 存盘通道：写入工作区文件，agent 可直接操作（压缩、发送等）
+        // 2. 存盘通道：写入店铺文件，agent 可直接操作（压缩、发送等）
         const attachments = [];
         const groupFolder = resolveGroupFolder?.(chatJid);
         const savedPaths: string[] = [];
